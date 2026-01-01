@@ -11,7 +11,7 @@
 		"homepage": "https://fabricmc.net/",
 		"sources": "https://github.com/FabricMC/fabric-example-mod"
 	},
-	"license": "Apache-2.0",
+	"license": "GPL-3.0",
 	"icon": "assets/simpleboats/icon.png",
 	"environment": "*",
 	"entrypoints": {
@@ -32,7 +32,7 @@
     "accessWidener": "simpleboats.accesswidener",
 	"depends": {
 		"fabricloader": ">=0.18.1",
-		"minecraft": "~1.21.10",
+		"minecraft": "~1.21.11",
 		"java": ">=21",
 		"fabric-api": "*"
 	},

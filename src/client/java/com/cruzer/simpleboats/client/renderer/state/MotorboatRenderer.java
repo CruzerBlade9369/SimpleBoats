@@ -7,7 +7,7 @@ import com.cruzer.simpleboats.client.model.MotorboatModelLayers;
 import com.cruzer.simpleboats.entity.vehicle.MotorboatEntity;
 import net.minecraft.client.model.Model;
 import net.minecraft.client.render.OverlayTexture;
-import net.minecraft.client.render.RenderLayer;
+import net.minecraft.client.render.RenderLayers;
 import net.minecraft.client.render.command.OrderedRenderCommandQueue;
 import net.minecraft.client.render.entity.EntityRenderer;
 import net.minecraft.client.render.entity.EntityRendererFactory;
@@ -37,7 +37,7 @@ public class MotorboatRenderer extends EntityRenderer<MotorboatEntity, Motorboat
         this.motorModel = new MotorModel(ctx.getPart(MotorboatModelLayers.MOTORBOAT_MOTOR));
         this.waterMaskModel = new Model.SinglePartModel(
                 ctx.getPart(MotorboatModelLayers.MOTORBOAT_WATER_MASK),
-                id -> RenderLayer.getWaterMask()
+                id -> RenderLayers.waterMask()
         );
         this.texture = texture;
         this.motorTexture = Identifier.of(SimpleBoats.MOD_ID, "textures/entity/motorboat/motor.png");
@@ -110,7 +110,7 @@ public class MotorboatRenderer extends EntityRenderer<MotorboatEntity, Motorboat
                 this.model,                                        // the Model (EntityModel / Model subclass)
                 state,                                             // render state with texture + lighting info
                 matrices,                                          // current matrices
-                RenderLayer.getEntityTranslucent(state.texture),   // RenderLayer obtained from model + texture
+                RenderLayers.entityTranslucent(state.texture),   // RenderLayer obtained from model + texture
                 state.light,                                       // packed light
                 OverlayTexture.DEFAULT_UV,                         // overlay UV (vanilla uses DEFAULT_UV here)
                 state.outlineColor,                                // outline color for outlines if any
@@ -121,7 +121,7 @@ public class MotorboatRenderer extends EntityRenderer<MotorboatEntity, Motorboat
                 this.motorModel,
                 state,
                 matrices,
-                RenderLayer.getEntityTranslucent(state.motorTexture),
+                RenderLayers.entityTranslucent(state.motorTexture),
                 state.light,
                 OverlayTexture.DEFAULT_UV,
                 state.outlineColor,
@@ -133,7 +133,7 @@ public class MotorboatRenderer extends EntityRenderer<MotorboatEntity, Motorboat
                     this.waterMaskModel,
                     Unit.INSTANCE,
                     matrices,
-                    RenderLayer.getWaterMask(),
+                    RenderLayers.waterMask(),
                     state.light,
                     OverlayTexture.DEFAULT_UV,
                     state.outlineColor,
