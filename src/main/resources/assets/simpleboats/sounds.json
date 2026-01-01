@@ -1,0 +1,20 @@
+{
+  "boat.motor": {
+    "sounds": [
+      {
+        "name": "simpleboats:boat_motor",
+        "stream": false
+      }
+    ]
+  },
+
+  "boat.motor.start": {
+    "sounds": [
+      {
+        "name": "simpleboats:boat_motor_start",
+        "stream": false
+      }
+    ],
+    "subtitle": "subtitles.simpleboats.boat_motor_start"
+  }
+}

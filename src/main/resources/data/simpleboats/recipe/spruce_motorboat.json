@@ -1,0 +1,13 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "group": "boat",
+  "ingredients": [
+    "simpleboats:outboard_motor",
+    "minecraft:spruce_boat"
+  ],
+  "result": {
+    "count": 1,
+    "id": "simpleboats:oak_motorboat"
+  }
+}

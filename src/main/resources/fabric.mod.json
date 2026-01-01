@@ -1,0 +1,42 @@
+{
+	"schemaVersion": 1,
+	"id": "simpleboats",
+	"version": "${version}",
+	"name": "Simple Boats",
+	"description": "Vanilla-friendly alternatives to the humble boat.",
+	"authors": [
+		"Cruzer"
+	],
+	"contact": {
+		"homepage": "https://fabricmc.net/",
+		"sources": "https://github.com/FabricMC/fabric-example-mod"
+	},
+	"license": "Apache-2.0",
+	"icon": "assets/simpleboats/icon.png",
+	"environment": "*",
+	"entrypoints": {
+		"main": [
+          "com.cruzer.simpleboats.SimpleBoats"
+		],
+		"client": [
+          "com.cruzer.simpleboats.SimpleBoatsClient"
+		]
+	},
+	"mixins": [
+		"simpleboats.mixins.json",
+		{
+			"config": "simpleboats.client.mixins.json",
+			"environment": "client"
+		}
+	],
+    "accessWidener": "simpleboats.accesswidener",
+	"depends": {
+		"fabricloader": ">=0.18.1",
+		"minecraft": "~1.21.10",
+		"java": ">=21",
+		"fabric-api": "*"
+	},
+	"suggests": {
+		"another-mod": "*"
+	}
+}

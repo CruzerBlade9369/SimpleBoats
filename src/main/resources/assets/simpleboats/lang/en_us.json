@@ -1,0 +1,15 @@
+{
+  "item.simpleboats.boat_propeller": "Boat Propeller",
+  "item.simpleboats.outboard_motor": "Outboard Motor",
+  "item.simpleboats.oak_motorboat": "Oak Motorboat",
+  "item.simpleboats.spruce_motorboat": "Spruce Motorboat",
+  "item.simpleboats.birch_motorboat": "Birch Motorboat",
+  "item.simpleboats.jungle_motorboat": "Jungle Motorboat",
+  "item.simpleboats.acacia_motorboat": "Acacia Motorboat",
+  "item.simpleboats.dark_oak_motorboat": "Dark Oak Motorboat",
+  "item.simpleboats.mangrove_motorboat": "Mangrove Motorboat",
+  "item.simpleboats.cherry_motorboat": "Cherry Motorboat",
+  "item.simpleboats.pale_oak_motorboat": "Pale Oak Motorboat",
+
+  "subtitles.simpleboats.boat_motor_start": "Boat engine starting"
+}
