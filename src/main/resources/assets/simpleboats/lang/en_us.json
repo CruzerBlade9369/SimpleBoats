@@ -11,5 +11,15 @@
   "item.simpleboats.cherry_motorboat": "Cherry Motorboat",
   "item.simpleboats.pale_oak_motorboat": "Pale Oak Motorboat",
 
+  "entity.simpleboats.oak_motorboat": "Oak Motorboat",
+  "entity.simpleboats.spruce_motorboat": "Spruce Motorboat",
+  "entity.simpleboats.birch_motorboat": "Birch Motorboat",
+  "entity.simpleboats.jungle_motorboat": "Jungle Motorboat",
+  "entity.simpleboats.acacia_motorboat": "Acacia Motorboat",
+  "entity.simpleboats.dark_oak_motorboat": "Dark Oak Motorboat",
+  "entity.simpleboats.mangrove_motorboat": "Mangrove Motorboat",
+  "entity.simpleboats.cherry_motorboat": "Cherry Motorboat",
+  "entity.simpleboats.pale_oak_motorboat": "Pale Oak Motorboat",
+
   "subtitles.simpleboats.boat_motor_start": "Boat engine starting"
 }
