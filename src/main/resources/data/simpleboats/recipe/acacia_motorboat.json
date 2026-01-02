@@ -4,10 +4,10 @@
   "group": "boat",
   "ingredients": [
     "simpleboats:outboard_motor",
-    "minecraft:spruce_boat"
+    "minecraft:acacia_boat"
   ],
   "result": {
     "count": 1,
-    "id": "simpleboats:spruce_motorboat"
+    "id": "simpleboats:acacia_motorboat"
   }
 }
