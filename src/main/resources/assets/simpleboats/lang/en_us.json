@@ -1,6 +1,8 @@
 {
   "item.simpleboats.boat_propeller": "Boat Propeller",
   "item.simpleboats.outboard_motor": "Outboard Motor",
+  "item.simpleboats.boat_sail": "Boat Sail",
+
   "item.simpleboats.oak_motorboat": "Oak Motorboat",
   "item.simpleboats.spruce_motorboat": "Spruce Motorboat",
   "item.simpleboats.birch_motorboat": "Birch Motorboat",
@@ -20,6 +22,26 @@
   "entity.simpleboats.mangrove_motorboat": "Mangrove Motorboat",
   "entity.simpleboats.cherry_motorboat": "Cherry Motorboat",
   "entity.simpleboats.pale_oak_motorboat": "Pale Oak Motorboat",
+
+  "item.simpleboats.oak_sailboat": "Oak Sailboat",
+  "item.simpleboats.spruce_sailboat": "Spruce Sailboat",
+  "item.simpleboats.birch_sailboat": "Birch Sailboat",
+  "item.simpleboats.jungle_sailboat": "Jungle Sailboat",
+  "item.simpleboats.acacia_sailboat": "Acacia Sailboat",
+  "item.simpleboats.dark_oak_sailboat": "Dark Oak Sailboat",
+  "item.simpleboats.mangrove_sailboat": "Mangrove Sailboat",
+  "item.simpleboats.cherry_sailboat": "Cherry Sailboat",
+  "item.simpleboats.pale_oak_sailboat": "Pale Oak Sailboat",
+
+  "entity.simpleboats.oak_sailboat": "Oak Sailboat",
+  "entity.simpleboats.spruce_sailboat": "Spruce Sailboat",
+  "entity.simpleboats.birch_sailboat": "Birch Sailboat",
+  "entity.simpleboats.jungle_sailboat": "Jungle Sailboat",
+  "entity.simpleboats.acacia_sailboat": "Acacia Sailboat",
+  "entity.simpleboats.dark_oak_sailboat": "Dark Oak Sailboat",
+  "entity.simpleboats.mangrove_sailboat": "Mangrove Sailboat",
+  "entity.simpleboats.cherry_sailboat": "Cherry Sailboat",
+  "entity.simpleboats.pale_oak_sailboat": "Pale Oak Sailboat",
 
   "subtitles.simpleboats.boat_motor_start": "Boat engine starting"
 }

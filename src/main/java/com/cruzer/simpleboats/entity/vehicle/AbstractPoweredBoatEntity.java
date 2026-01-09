@@ -2,11 +2,14 @@ package com.cruzer.simpleboats.entity.vehicle;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityDimensions;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.data.DataTracker;
 import net.minecraft.entity.data.TrackedData;
 import net.minecraft.entity.data.TrackedDataHandlerRegistry;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.vehicle.AbstractBoatEntity;
 import net.minecraft.entity.vehicle.BoatEntity;
 import net.minecraft.item.Item;
 import net.minecraft.util.math.MathHelper;
@@ -25,12 +28,29 @@ public abstract class AbstractPoweredBoatEntity extends BoatEntity
     protected static final TrackedData<Float> POWER_THRUST_LEVEL =
             DataTracker.registerData(AbstractPoweredBoatEntity.class, TrackedDataHandlerRegistry.FLOAT);
 
-    private boolean leftInput;
-    private boolean rightInput;
+    protected boolean leftInput;
+    protected boolean rightInput;
+
+    protected static final float DRAG_COMPENSATOR = 0.9f;
 
     public AbstractPoweredBoatEntity(EntityType<? extends BoatEntity> entityType, World world, Supplier<Item> supplier)
     {
         super(entityType, world, supplier);
+    }
+
+    public float getPowerLevel()
+    {
+        return this.dataTracker.get(POWER_THRUST_LEVEL);
+    }
+
+    public float getYawVelocity()
+    {
+        return this.yawVelocity;
+    }
+
+    public Location getLocation()
+    {
+        return this.checkLocation();
     }
 
     @Override
@@ -42,12 +62,71 @@ public abstract class AbstractPoweredBoatEntity extends BoatEntity
         builder.add(POWER_THRUST_LEVEL, 0.0f);
     }
 
-    public float getThrottle()
+    @Override
+    protected int getMaxPassengers()
     {
-        return this.dataTracker.get(POWER_THRUST_LEVEL);
+        return getPoweredBoatMaxPax();
     }
 
-    protected void setThrottle(float throttle)
+    @Override
+    protected Vec3d getPassengerAttachmentPos(
+            Entity pax,
+            EntityDimensions dimensions,
+            float scaleFactor
+    )
+    {
+        int index = this.getPassengerList().indexOf(pax);
+        double y = this.getPassengerAttachmentY(dimensions);
+
+        Vec3d offset = getPaxOffsets(index, y + 0.15);
+
+        return offset.rotateY(-this.getYawRad());
+    }
+
+    @Override
+    protected double getPassengerAttachmentY(EntityDimensions dimensions)
+    {
+        return 0.4 + dimensions.height() * 0.25;
+    }
+
+    @Override
+    protected void updatePassengerPosition(Entity pax, PositionUpdater pos)
+    {
+        super.updatePassengerPosition(pax, pos);
+        this.clampPassengerYaw(pax);
+    }
+
+    protected Vec3d getPaxOffsets(int index, double y)
+    {
+        return switch (index)
+        {
+            case 3 -> new Vec3d(-0.5, y,  0.6); // front-left
+            case 4 -> new Vec3d( 0.5, y,  0.6); // front-right
+            case 1 -> new Vec3d(-0.5, y, -0.8); // back-left
+            case 2 -> new Vec3d( 0.5, y, -0.8); // back-right
+            case 0 -> new Vec3d(0, y + 0.35, -2); // back-center, driver
+            default -> Vec3d.ZERO;
+        };
+    }
+
+    protected float getYawRad()
+    {
+        return this.getYaw() * ((float)Math.PI / 180F);
+    }
+
+    public float getForwardSpeed()
+    {
+        Vec3d vel = this.getVelocity();
+
+        float yawRad = getYawRad();
+
+        double forwardX = -MathHelper.sin(yawRad);
+        double forwardZ =  MathHelper.cos(yawRad);
+
+        return MathHelper.abs((float)(vel.x * forwardX + vel.z * forwardZ));
+    }
+
+    protected void setPowerLevel(float throttle)
     {
         this.dataTracker.set(POWER_THRUST_LEVEL, throttle);
     }
@@ -59,26 +138,26 @@ public abstract class AbstractPoweredBoatEntity extends BoatEntity
         this.dataTracker.set(DOWN_INPUT, down);
     }
 
-    protected void applyThrottle()
+    protected void applyPower()
     {
-        float throttle = this.dataTracker.get(POWER_THRUST_LEVEL);
+        float powerLevel = this.dataTracker.get(POWER_THRUST_LEVEL);
 
         if (this.dataTracker.get(UP_INPUT)) {
-            throttle += getPowerControlRate();
+            powerLevel += getPowerControlRate();
         }
         if (this.dataTracker.get(DOWN_INPUT)) {
-            throttle -= getPowerControlRate();
+            powerLevel -= getPowerControlRate();
         }
 
-        throttle = MathHelper.clamp(throttle, 0.0f, 1.0f);
-        setThrottle(throttle);
+        powerLevel = MathHelper.clamp(powerLevel, getMinPowerLevel(), 1.0f);
+        setPowerLevel(powerLevel);
     }
 
-    protected void applyThrottleMovement(float throttle)
+    protected void applyPoweredMovement(float powerLevel)
     {
-        float thrust = throttle * getPowerThrust();
+        float thrust = powerLevel * getPowerThrust();
 
-        float yawRad = this.getYaw() * ((float)Math.PI / 180F);
+        float yawRad = getYawRad();
 
         Vec3d boost = new Vec3d(
                 -MathHelper.sin(yawRad) * thrust,
@@ -89,15 +168,7 @@ public abstract class AbstractPoweredBoatEntity extends BoatEntity
         this.setVelocity(this.getVelocity().add(boost));
     }
 
-    protected void applyTurning(float throttle)
-    {
-        float turnStrength = (float) (1 - Math.pow(1 - throttle, 2));
-
-        if (leftInput)
-            this.yawVelocity -= turnStrength;
-        if (rightInput)
-            this.yawVelocity += turnStrength;
-    }
+    protected abstract void applyTurning();
 
     @Override
     public void setInputs(boolean left, boolean right, boolean forward, boolean back)
@@ -114,36 +185,40 @@ public abstract class AbstractPoweredBoatEntity extends BoatEntity
         boolean hasDriver = this.getControllingPassenger() instanceof PlayerEntity;
 
         if (isServer) {
-            if (hasDriver) applyThrottle();
-            else resetThrottle();
+            if (hasDriver) applyPower();
+            else resetPower();
         }
 
         if (canUpdateMovement)
         {
-            float throttle = getThrottle();
-            applyTurning(throttle);
-            applyThrottleMovement(throttle);
+            float powerLevel = getPowerLevel();
+            applyTurning();
+            applyPoweredMovement(powerLevel);
+
+            System.out.println(getForwardSpeed());
 
             if (!isServer)
             {
-                clientVisualTick(throttle);
+                clientVisualTick(powerLevel);
             }
         }
 
         super.tick();
     }
 
-    protected void resetThrottle()
+    protected void resetPower()
     {
-        setThrottle(0.0f);
+        setPowerLevel(0.0f);
     }
 
     @Environment(EnvType.CLIENT)
-    protected void clientVisualTick(float throttle)
+    protected void clientVisualTick(float powerLevel)
     {
         // Client-side visual effects can be implemented in subclasses
     }
 
     protected abstract float getPowerControlRate();
     protected abstract float getPowerThrust();
+    protected abstract float getMinPowerLevel();
+    protected abstract int getPoweredBoatMaxPax();
 }

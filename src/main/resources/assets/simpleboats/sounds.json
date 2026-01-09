@@ -8,6 +8,15 @@
     ]
   },
 
+  "boat.sail.ambient": {
+    "sounds": [
+      {
+        "name": "simpleboats:sailboat_ambient",
+        "stream": false
+      }
+    ]
+  },
+
   "boat.motor.start": {
     "sounds": [
       {

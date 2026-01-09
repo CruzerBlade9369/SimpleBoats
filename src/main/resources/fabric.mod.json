@@ -20,8 +20,11 @@
 		],
 		"client": [
           "com.cruzer.simpleboats.SimpleBoatsClient"
-		]
-	},
+		],
+      "fabric-datagen": [
+        "com.cruzer.simpleboats.datagen.SimpleBoatsDataGenerator"
+      ]
+    },
 	"mixins": [
 		"simpleboats.mixins.json",
 		{

@@ -1,24 +1,24 @@
 package com.cruzer.simpleboats.client.sound;
 
-import com.cruzer.simpleboats.entity.vehicle.MotorboatEntity;
-import com.cruzer.simpleboats.registry.SimpleBoatsSounds;
+import com.cruzer.simpleboats.entity.vehicle.AbstractPoweredBoatEntity;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.sound.MovingSoundInstance;
 import net.minecraft.client.sound.SoundInstance;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.sound.SoundCategory;
-import net.minecraft.util.math.MathHelper;
+import net.minecraft.sound.SoundEvent;
 
 @Environment(EnvType.CLIENT)
-public class MotorboatOutsideSoundInstance extends MovingSoundInstance
+public class AbstractPoweredBoatSoundInstance extends MovingSoundInstance
 {
-    private final MotorboatEntity boat;
+    protected final AbstractPoweredBoatEntity boat;
+    protected boolean hasDriver;
 
-    public MotorboatOutsideSoundInstance(MotorboatEntity boat)
+    public AbstractPoweredBoatSoundInstance(AbstractPoweredBoatEntity boat, SoundEvent sound)
     {
         super(
-                SimpleBoatsSounds.BOAT_MOTOR,
+                sound,
                 SoundCategory.NEUTRAL,
                 SoundInstance.createRandom()
         );
@@ -45,7 +45,6 @@ public class MotorboatOutsideSoundInstance extends MovingSoundInstance
         return true;
     }
 
-
     @Override
     public void tick()
     {
@@ -55,20 +54,12 @@ public class MotorboatOutsideSoundInstance extends MovingSoundInstance
             return;
         }
 
-        boolean hasDriver = boat.getControllingPassenger() instanceof PlayerEntity;
-        if (!hasDriver)
-        {
-            this.volume = 0f;
-            return;
-        }
+        hasDriver = boat.getControllingPassenger() instanceof PlayerEntity;
 
         this.x = (float) boat.getX();
         this.y = (float) boat.getY();
         this.z = (float) boat.getZ();
 
-        float throttle = boat.getThrottle();
-
-        this.volume = MathHelper.lerp(throttle, 0.75f, 1.2f);
-        this.pitch = MathHelper.lerp(throttle, 0.4f, 1.55f);
+        // sound conditions implementation on subclass
     }
 }

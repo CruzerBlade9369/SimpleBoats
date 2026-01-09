@@ -1,7 +1,7 @@
 package com.cruzer.simpleboats;
 
-import com.cruzer.simpleboats.entity.SimpleBoatsEntities;
-import com.cruzer.simpleboats.item.SimpleBoatsItems;
+import com.cruzer.simpleboats.registry.SimpleBoatsEntities;
+import com.cruzer.simpleboats.registry.SimpleBoatsItems;
 import com.cruzer.simpleboats.network.SimpleBoatsNetworking;
 import com.cruzer.simpleboats.registry.SimpleBoatsSounds;
 import net.fabricmc.api.ModInitializer;

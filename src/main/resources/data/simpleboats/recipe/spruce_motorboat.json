@@ -1,10 +1,15 @@
 {
-  "type": "minecraft:crafting_shapeless",
+  "type": "minecraft:crafting_shaped",
   "category": "misc",
-  "group": "boat",
-  "ingredients": [
-    "simpleboats:outboard_motor",
-    "minecraft:spruce_boat"
+  "key": {
+    "#": "minecraft:bamboo",
+    "E": "simpleboats:outboard_motor",
+    "S": "minecraft:stripped_spruce_log"
+  },
+  "pattern": [
+    "#S#",
+    "#S#",
+    "#E#"
   ],
   "result": {
     "count": 1,

@@ -10,6 +10,7 @@ public class SimpleBoatsSounds
 {
     public static final SoundEvent BOAT_MOTOR = register("boat.motor");
     public static final SoundEvent BOAT_MOTOR_START = register("boat.motor.start");
+    public static final SoundEvent BOAT_SAIL = register("boat.sail.ambient");
 
     private static SoundEvent register(String id) {
         Identifier identifier = Identifier.of(SimpleBoats.MOD_ID, id);
@@ -20,7 +21,5 @@ public class SimpleBoatsSounds
         );
     }
 
-    public static void registerAll() {
-
-    }
+    public static void registerAll() {}
 }

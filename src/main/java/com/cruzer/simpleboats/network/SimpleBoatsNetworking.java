@@ -1,7 +1,7 @@
 package com.cruzer.simpleboats.network;
 
 import com.cruzer.simpleboats.SimpleBoats;
-import com.cruzer.simpleboats.entity.vehicle.MotorboatEntity;
+import com.cruzer.simpleboats.entity.vehicle.AbstractPoweredBoatEntity;
 import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.server.network.ServerPlayerEntity;
@@ -9,8 +9,8 @@ import net.minecraft.util.Identifier;
 
 public class SimpleBoatsNetworking {
 
-    public static final Identifier MOTORBOAT_THROTTLE =
-            Identifier.of(SimpleBoats.MOD_ID, "motorboat_throttle");
+    public static final Identifier BOAT_POWER_LEVEL =
+            Identifier.of(SimpleBoats.MOD_ID, "boat_power_level");
 
     public static void register() {
         PayloadTypeRegistry.playC2S().register(
@@ -26,9 +26,9 @@ public class SimpleBoatsNetworking {
 
                     context.server().execute(() ->
                     {
-                        if (player.getVehicle() instanceof MotorboatEntity mb)
+                        if (player.getVehicle() instanceof AbstractPoweredBoatEntity pb)
                         {
-                            mb.applyThrottleIntent(
+                            pb.applyThrottleIntent(
                                     player,
                                     payload.throttleUp(),
                                     payload.throttleDown()

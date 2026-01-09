@@ -1,3 +1,4 @@
 accessWidener v2 named
 accessible field net/minecraft/entity/vehicle/AbstractBoatEntity yawVelocity F
 accessible field net/minecraft/entity/vehicle/AbstractBoatEntity nearbySlipperiness F
+accessible method net/minecraft/entity/vehicle/AbstractBoatEntity checkLocation ()Lnet/minecraft/entity/vehicle/AbstractBoatEntity$Location;

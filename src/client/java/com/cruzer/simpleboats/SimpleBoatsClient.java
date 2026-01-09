@@ -1,12 +1,12 @@
 package com.cruzer.simpleboats;
 
-import com.cruzer.simpleboats.client.model.MotorModel;
-import com.cruzer.simpleboats.client.model.MotorboatModel;
-import com.cruzer.simpleboats.client.model.MotorboatModelLayers;
+import com.cruzer.simpleboats.client.model.*;
 import com.cruzer.simpleboats.client.renderer.MotorboatRenderer;
-import com.cruzer.simpleboats.entity.SimpleBoatsEntities;
+import com.cruzer.simpleboats.client.renderer.SailboatRenderer;
+import com.cruzer.simpleboats.registry.SimpleBoatsEntities;
 import com.cruzer.simpleboats.entity.vehicle.MotorboatEntity;
-import com.cruzer.simpleboats.entity.vehicle.MotorboatType;
+import com.cruzer.simpleboats.entity.vehicle.SailboatEntity;
+import com.cruzer.simpleboats.registry.SimpleBoatsTypes;
 import com.cruzer.simpleboats.network.SimpleBoatsControlPacket;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
@@ -14,6 +14,7 @@ import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.client.rendering.v1.EntityModelLayerRegistry;
 import net.minecraft.client.render.entity.EntityRendererFactories;
 import net.minecraft.entity.EntityType;
+import net.minecraft.entity.vehicle.AbstractBoatEntity;
 import net.minecraft.util.Identifier;
 
 public class SimpleBoatsClient implements ClientModInitializer
@@ -23,7 +24,7 @@ public class SimpleBoatsClient implements ClientModInitializer
     private static final KeyBinding.Category SIMPLEBOATS_KEYBIND_CATEGORY =
             KeyBinding.Category.create(Identifier.of(SimpleBoats.MOD_ID));*/
 
-    private static final String TEXTURE_DIR = "textures/entity/motorboat/";
+    private static final String TEXTURE_DIR = "textures/entity/generic_boat/";
 
     private static boolean throttleLastUp;
     private static boolean throttleLastDown;
@@ -31,47 +32,33 @@ public class SimpleBoatsClient implements ClientModInitializer
     @Override
     public void onInitializeClient()
     {
-        /*ACCELERATE = KeyBindingHelper.registerKeyBinding(new KeyBinding(
-                "key.simpleboats.accelerate",
-                InputUtil.Type.KEYSYM,
-                GLFW.GLFW_KEY_W,
-                SIMPLEBOATS_KEYBIND_CATEGORY
-        ));
-
-        DECELERATE = KeyBindingHelper.registerKeyBinding(new KeyBinding(
-                "key.simpleboats.decelerate",
-                InputUtil.Type.KEYSYM,
-                GLFW.GLFW_KEY_S,
-                SIMPLEBOATS_KEYBIND_CATEGORY
-        ));*/
-
-        EntityModelLayerRegistry.registerModelLayer(
-                MotorboatModelLayers.MOTORBOAT,
-                MotorboatModel::getTexturedModelData
+        // Register all model layers
+        SimpleBoatsModelLayers.ALL.forEach(entry ->
+                EntityModelLayerRegistry.registerModelLayer(
+                        entry.layer(),
+                        entry.provider()
+                )
         );
 
-        EntityModelLayerRegistry.registerModelLayer(
-                MotorboatModelLayers.MOTORBOAT_MOTOR,
-                MotorModel::getMotorModelData
-        );
-
-        EntityModelLayerRegistry.registerModelLayer(
-                MotorboatModelLayers.MOTORBOAT_WATER_MASK,
-                MotorboatModel::getWaterPatchModelData
-        );
-
-        // Register motorboat entity renderers for all wood variants
-        for (MotorboatType type : MotorboatType.values())
+        // Register boats entity renderers for all wood variants
+        for (SimpleBoatsTypes type : SimpleBoatsTypes.values())
         {
-            EntityType<MotorboatEntity> entityType =
-                    SimpleBoatsEntities.TYPES.get(type);
+            EntityType<MotorboatEntity> mbEntityType =
+                    SimpleBoatsEntities.MOTORBOAT_TYPES.get(type);
+            EntityType<SailboatEntity> sbEntityType =
+                    SimpleBoatsEntities.SAILBOAT_TYPES.get(type);
 
             Identifier hullTexture = Identifier.of(SimpleBoats.MOD_ID,
                     TEXTURE_DIR + type.getName() + "_motorboat.png");
 
             EntityRendererFactories.register(
-                    entityType,
+                    mbEntityType,
                     ctx -> new MotorboatRenderer(ctx, hullTexture)
+            );
+
+            EntityRendererFactories.register(
+                    sbEntityType,
+                    ctx -> new SailboatRenderer(ctx, hullTexture)
             );
         }
 
@@ -79,7 +66,7 @@ public class SimpleBoatsClient implements ClientModInitializer
         {
             if (client.player == null) return;
 
-            if (!(client.player.getVehicle() instanceof MotorboatEntity)) return;
+            if (!(client.player.getVehicle() instanceof AbstractBoatEntity)) return;
 
             boolean up = client.options.forwardKey.isPressed();
             boolean down = client.options.backKey.isPressed();

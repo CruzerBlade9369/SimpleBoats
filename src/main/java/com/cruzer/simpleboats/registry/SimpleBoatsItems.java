@@ -1,8 +1,8 @@
-package com.cruzer.simpleboats.item;
+package com.cruzer.simpleboats.registry;
 
 import com.cruzer.simpleboats.SimpleBoats;
-import com.cruzer.simpleboats.entity.SimpleBoatsEntities;
-import com.cruzer.simpleboats.entity.vehicle.MotorboatType;
+import com.cruzer.simpleboats.item.MotorboatItem;
+import com.cruzer.simpleboats.item.SailboatItem;
 import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
 import net.minecraft.item.*;
 import net.minecraft.registry.Registries;
@@ -19,17 +19,29 @@ public class SimpleBoatsItems
 {
     public static final Item BOAT_PROPELLER = register("boat_propeller");
     public static final Item OUTBOARD_MOTOR = register("outboard_motor");
+    public static final Item BOAT_SAIL = register("boat_sail");
 
-    public static final Map<MotorboatType, Item> MOTORBOAT_ITEMS = new HashMap<>();
+    public static final Map<SimpleBoatsTypes, Item> MOTORBOAT_ITEMS = new HashMap<>();
+    public static final Map<SimpleBoatsTypes, Item> SAILBOAT_ITEMS = new HashMap<>();
 
     public static void initialize()
     {
-        for (MotorboatType type : MotorboatType.values())
+        registerMotorboats();
+        registerSailboats();
+
+        addToItemGroup(BOAT_PROPELLER, ItemGroups.INGREDIENTS);
+        addToItemGroup(OUTBOARD_MOTOR, ItemGroups.INGREDIENTS);
+        addToItemGroup(BOAT_SAIL, ItemGroups.INGREDIENTS);
+    }
+
+    private static void registerMotorboats()
+    {
+        for (SimpleBoatsTypes type : SimpleBoatsTypes.values())
         {
             Item item = register(
                     keyOf(type.getName() + "_motorboat"),
                     settings -> new MotorboatItem(
-                            SimpleBoatsEntities.TYPES.get(type),
+                            SimpleBoatsEntities.MOTORBOAT_TYPES.get(type),
                             settings
                     ),
                     new Item.Settings().maxCount(1)
@@ -38,9 +50,24 @@ public class SimpleBoatsItems
             MOTORBOAT_ITEMS.put(type, item);
             addToItemGroup(item, ItemGroups.TOOLS);
         }
+    }
 
-        addToItemGroup(BOAT_PROPELLER, ItemGroups.INGREDIENTS);
-        addToItemGroup(OUTBOARD_MOTOR, ItemGroups.INGREDIENTS);
+    private static void registerSailboats()
+    {
+        for (SimpleBoatsTypes type : SimpleBoatsTypes.values())
+        {
+            Item item = register(
+                    keyOf(type.getName() + "_sailboat"),
+                    settings -> new SailboatItem(
+                            SimpleBoatsEntities.SAILBOAT_TYPES.get(type),
+                            settings
+                    ),
+                    new Item.Settings().maxCount(1)
+            );
+
+            SAILBOAT_ITEMS.put(type, item);
+            addToItemGroup(item, ItemGroups.TOOLS);
+        }
     }
 
     private static void addToItemGroup(Item item, RegistryKey<ItemGroup> group)

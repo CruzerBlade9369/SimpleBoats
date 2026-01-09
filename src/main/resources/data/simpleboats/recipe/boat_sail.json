@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "P": "#minecraft:logs",
+    "S": "minecraft:stick",
+    "W": "#minecraft:wool"
+  },
+  "pattern": [
+    "WSW",
+    "WPW",
+    " S "
+  ],
+  "result": {
+    "count": 1,
+    "id": "simpleboats:boat_sail"
+  }
+}

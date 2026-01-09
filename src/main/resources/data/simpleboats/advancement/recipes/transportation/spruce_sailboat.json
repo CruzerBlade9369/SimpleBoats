@@ -1,0 +1,32 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_boat_sail": {
+      "conditions": {
+        "items": [
+          {
+            "items": "simpleboats:boat_sail"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "simpleboats:spruce_sailboat"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_boat_sail"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "simpleboats:spruce_sailboat"
+    ]
+  }
+}

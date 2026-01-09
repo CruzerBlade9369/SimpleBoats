@@ -4,8 +4,8 @@
   "key": {
     "I": "minecraft:iron_ingot",
     "P": "minecraft:piston",
-    "X": "simpleboats:boat_propeller",
-    "R": "minecraft:redstone"
+    "R": "minecraft:redstone",
+    "X": "simpleboats:boat_propeller"
   },
   "pattern": [
     "IRI",

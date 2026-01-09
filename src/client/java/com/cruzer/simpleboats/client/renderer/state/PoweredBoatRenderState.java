@@ -7,4 +7,8 @@ public class PoweredBoatRenderState extends BoatEntityRenderState
 {
     public float pitch;
     public Identifier texture;
+    public float swayRoll;
+    public float swayPitch;
+    public float turnRoll;
+    public float speedPitch;
 }

@@ -1,15 +1,15 @@
 package com.cruzer.simpleboats.mixin.client;
 
-import com.cruzer.simpleboats.client.sound.MotorboatOutsideSoundInstance;
+import com.cruzer.simpleboats.client.sound.MotorboatEngineSoundInstance;
+import com.cruzer.simpleboats.client.sound.SailboatWindSoundInstance;
 import com.cruzer.simpleboats.entity.vehicle.MotorboatEntity;
+import com.cruzer.simpleboats.entity.vehicle.SailboatEntity;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
-import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.entity.Entity;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
@@ -27,11 +27,20 @@ public abstract class ClientPlayNetworkHandlerMixin
             CallbackInfo ci
     )
     {
-        if (entity instanceof MotorboatEntity boat)
+        if (entity instanceof MotorboatEntity mb)
         {
             MinecraftClient.getInstance().getSoundManager().play(
-                    new MotorboatOutsideSoundInstance(
-                            boat
+                    new MotorboatEngineSoundInstance(
+                            mb
+                    )
+            );
+        }
+
+        if (entity instanceof SailboatEntity sb)
+        {
+            MinecraftClient.getInstance().getSoundManager().play(
+                    new SailboatWindSoundInstance(
+                            sb
                     )
             );
         }

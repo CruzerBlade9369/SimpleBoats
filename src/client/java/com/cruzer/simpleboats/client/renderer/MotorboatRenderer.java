@@ -1,9 +1,6 @@
 package com.cruzer.simpleboats.client.renderer;
 
-import com.cruzer.simpleboats.SimpleBoats;
-import com.cruzer.simpleboats.client.model.MotorModel;
-import com.cruzer.simpleboats.client.model.MotorboatModel;
-import com.cruzer.simpleboats.client.model.MotorboatModelLayers;
+import com.cruzer.simpleboats.client.model.*;
 import com.cruzer.simpleboats.client.renderer.state.MotorboatRenderState;
 import com.cruzer.simpleboats.entity.vehicle.MotorboatEntity;
 import net.minecraft.client.render.OverlayTexture;
@@ -23,9 +20,9 @@ public class MotorboatRenderer extends AbstractPoweredBoatRenderer<MotorboatEnti
 
     public MotorboatRenderer(EntityRendererFactory.Context ctx, Identifier texture)
     {
-        super(ctx, MotorboatModelLayers.MOTORBOAT, texture);
-        this.motorModel = new MotorModel(ctx.getPart(MotorboatModelLayers.MOTORBOAT_MOTOR));
-        this.motorTexture = Identifier.of(SimpleBoats.MOD_ID, "textures/entity/motorboat/motor.png");
+        super(ctx, SimpleBoatsModelLayers.BOAT_HULL, texture);
+        this.motorModel = new MotorModel(ctx.getPart(SimpleBoatsModelLayers.MOTORBOAT_MOTOR));
+        this.motorTexture = texture;
     }
 
     @Override
@@ -37,7 +34,7 @@ public class MotorboatRenderer extends AbstractPoweredBoatRenderer<MotorboatEnti
     @Override
     protected EntityModelLayer getWaterMaskLayer()
     {
-        return MotorboatModelLayers.MOTORBOAT_WATER_MASK;
+        return SimpleBoatsModelLayers.BOAT_WATER_MASK;
     }
 
     @Override
@@ -46,7 +43,7 @@ public class MotorboatRenderer extends AbstractPoweredBoatRenderer<MotorboatEnti
             EntityModelLayer layer
     )
     {
-        return new MotorboatModel(ctx.getPart(layer));
+        return new GenericBoatModel<>(ctx.getPart(layer));
     }
 
     @Override
@@ -57,11 +54,13 @@ public class MotorboatRenderer extends AbstractPoweredBoatRenderer<MotorboatEnti
     )
     {
         state.motorTexture = motorTexture;
-        state.propellerRotation = MathHelper.lerpAngleRadians(
+        state.propellerRotation = -MathHelper.lerpAngleRadians(
                 tick,
                 entity.getPropellerAngle()[1],
                 entity.getPropellerAngle()[0]
         );
+        state.propDirYaw = entity.getPropDirYaw();
+        state.throttleLeverPitch = -entity.getPowerLevel() * 0.2f;
     }
 
     @Override

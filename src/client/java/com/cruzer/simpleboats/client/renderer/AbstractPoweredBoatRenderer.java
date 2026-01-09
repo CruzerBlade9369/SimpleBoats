@@ -12,8 +12,10 @@ import net.minecraft.client.render.entity.model.EntityModel;
 import net.minecraft.client.render.entity.model.EntityModelLayer;
 import net.minecraft.client.render.state.CameraRenderState;
 import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.entity.vehicle.AbstractBoatEntity;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.Unit;
+import net.minecraft.util.math.Box;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.RotationAxis;
 import org.joml.Quaternionf;
@@ -39,6 +41,14 @@ public abstract class AbstractPoweredBoatRenderer<
         this.waterMaskModel = new Model.SinglePartModel(
                 ctx.getPart(getWaterMaskLayer()),
                 id -> RenderLayers.waterMask()
+        );
+    }
+
+    @Override
+    protected Box getBoundingBox(E entity)
+    {
+        return entity.getBoundingBox().expand(
+                2.5, 1.0, 2.5
         );
     }
 
@@ -84,9 +94,79 @@ public abstract class AbstractPoweredBoatRenderer<
             matrices.multiply(new Quaternionf().setAngleAxis(state.bubbleWobble * (float) (Math.PI / 180.0), 1.0F, 0.0F, 1.0F));
         }
 
+        // ambient sway
+        matrices.multiply(
+                RotationAxis.POSITIVE_Z.rotationDegrees(state.swayRoll)
+        );
+        matrices.multiply(
+                RotationAxis.POSITIVE_X.rotationDegrees(state.swayPitch)
+        );
+        // speed pitch
+        matrices.multiply(
+                RotationAxis.POSITIVE_X.rotationDegrees(state.speedPitch)
+        );
+        // turn lean
+        matrices.multiply(
+                RotationAxis.POSITIVE_Z.rotationDegrees(state.turnRoll)
+        );
+
         // flip / rotate to match model orientation
         matrices.scale(-1.0F, -1.0F, 1.0F);
-        matrices.multiply(RotationAxis.POSITIVE_Y.rotationDegrees(90.0F));
+        // matrices.multiply(RotationAxis.POSITIVE_Y.rotationDegrees(90.0F));
+    }
+
+    protected void updateBoatSway(E entity, S state, float tick)
+    {
+        if (entity.getLocation() != AbstractBoatEntity.Location.IN_WATER) return;
+
+        applyAmbientSway(entity, state, tick);
+        applySpeedPitch(entity, state);
+        applyTurnRoll(entity, state);
+    }
+
+    private void applyAmbientSway(E entity, S state, float tick)
+    {
+        int hash = entity.getUuid().hashCode();
+        float phaseOffset =
+                (hash & 0xFFFF) / (float) 0xFFFF * MathHelper.TAU;
+
+        float time = entity.age + tick + phaseOffset;
+
+        boolean isRaining = entity.getEntityWorld().isRaining() && entity.getEntityWorld().isSkyVisibleAllowingSea(entity.getBlockPos());
+        float rainMultiplier = isRaining ? 2.2F : 1.0F;
+
+        float baseSwayAmp = 0.5F;
+        float baseSwaySpeed = 0.05F;
+
+        float swayAmp = baseSwayAmp * rainMultiplier;
+        float swaySpeed = baseSwaySpeed * rainMultiplier * 0.85f;
+
+        state.swayRoll =
+                MathHelper.sin(time * swaySpeed) * swayAmp;
+
+        state.swayPitch =
+                MathHelper.cos(time * swaySpeed * 0.8F) * swayAmp * 0.6F;
+    }
+
+    private void applySpeedPitch(E entity, S state)
+    {
+        float maxSpeedPitch = 3.5F;
+
+        float fwdSpd = entity.getForwardSpeed();
+        float speedClamped = MathHelper.clamp(fwdSpd, 0.0F, 1.0F);
+
+        state.speedPitch = MathHelper.lerp(
+                1F,
+                state.speedPitch,
+                speedClamped * maxSpeedPitch
+        );
+    }
+
+    private void applyTurnRoll(E entity, S state)
+    {
+        float turnStrength = 0.55F;
+
+        state.turnRoll = entity.getYawVelocity() * turnStrength;
     }
 
     @Override
@@ -106,6 +186,7 @@ public abstract class AbstractPoweredBoatRenderer<
         state.texture = this.texture;
 
         updateSubclassState(entity, state, tick);
+        updateBoatSway(entity, state, tick);
     }
 
     @Override
