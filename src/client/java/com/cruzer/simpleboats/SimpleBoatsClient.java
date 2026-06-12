@@ -48,17 +48,17 @@ public class SimpleBoatsClient implements ClientModInitializer
             EntityType<SailboatEntity> sbEntityType =
                     SimpleBoatsEntities.SAILBOAT_TYPES.get(type);
 
-            Identifier hullTexture = Identifier.of(SimpleBoats.MOD_ID,
-                    TEXTURE_DIR + type.getName() + "_motorboat.png");
+            Identifier baseTexture = Identifier.of(SimpleBoats.MOD_ID,
+                    TEXTURE_DIR + type.getName() + "_simpleboat.png");
 
             EntityRendererFactories.register(
                     mbEntityType,
-                    ctx -> new MotorboatRenderer(ctx, hullTexture)
+                    ctx -> new MotorboatRenderer(ctx, baseTexture)
             );
 
             EntityRendererFactories.register(
                     sbEntityType,
-                    ctx -> new SailboatRenderer(ctx, hullTexture)
+                    ctx -> new SailboatRenderer(ctx, baseTexture)
             );
         }
 

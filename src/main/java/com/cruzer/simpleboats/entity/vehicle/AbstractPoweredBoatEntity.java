@@ -42,12 +42,10 @@ public abstract class AbstractPoweredBoatEntity extends BoatEntity
     {
         return this.dataTracker.get(POWER_THRUST_LEVEL);
     }
-
     public float getYawVelocity()
     {
         return this.yawVelocity;
     }
-
     public Location getLocation()
     {
         return this.checkLocation();
@@ -184,9 +182,15 @@ public abstract class AbstractPoweredBoatEntity extends BoatEntity
         boolean isServer = !this.getEntityWorld().isClient();
         boolean hasDriver = this.getControllingPassenger() instanceof PlayerEntity;
 
-        if (isServer) {
-            if (hasDriver) applyPower();
-            else resetPower();
+        if(hasDriver)
+        {
+            if (isServer){
+                applyPower();
+            }
+        }
+        else
+        {
+            resetPower();
         }
 
         if (canUpdateMovement)
@@ -194,8 +198,6 @@ public abstract class AbstractPoweredBoatEntity extends BoatEntity
             float powerLevel = getPowerLevel();
             applyTurning();
             applyPoweredMovement(powerLevel);
-
-            System.out.println(getForwardSpeed());
 
             if (!isServer)
             {

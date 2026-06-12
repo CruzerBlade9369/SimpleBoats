@@ -48,7 +48,7 @@ public abstract class AbstractPoweredBoatRenderer<
     protected Box getBoundingBox(E entity)
     {
         return entity.getBoundingBox().expand(
-                2.5, 1.0, 2.5
+                3.0, 5.0, 3.0
         );
     }
 
@@ -112,12 +112,11 @@ public abstract class AbstractPoweredBoatRenderer<
 
         // flip / rotate to match model orientation
         matrices.scale(-1.0F, -1.0F, 1.0F);
-        // matrices.multiply(RotationAxis.POSITIVE_Y.rotationDegrees(90.0F));
     }
 
     protected void updateBoatSway(E entity, S state, float tick)
     {
-        if (entity.getLocation() != AbstractBoatEntity.Location.IN_WATER) return;
+        if (!entity.isTouchingWater()) return;
 
         applyAmbientSway(entity, state, tick);
         applySpeedPitch(entity, state);
@@ -126,13 +125,10 @@ public abstract class AbstractPoweredBoatRenderer<
 
     private void applyAmbientSway(E entity, S state, float tick)
     {
-        int hash = entity.getUuid().hashCode();
-        float phaseOffset =
-                (hash & 0xFFFF) / (float) 0xFFFF * MathHelper.TAU;
-
+        float phaseOffset = (entity.getUuid().hashCode() & 0xFFFF) * 0.01F;
         float time = entity.age + tick + phaseOffset;
 
-        boolean isRaining = entity.getEntityWorld().isRaining() && entity.getEntityWorld().isSkyVisibleAllowingSea(entity.getBlockPos());
+        boolean isRaining = entity.getEntityWorld().isRaining();
         float rainMultiplier = isRaining ? 2.2F : 1.0F;
 
         float baseSwayAmp = 0.5F;
@@ -164,7 +160,7 @@ public abstract class AbstractPoweredBoatRenderer<
 
     private void applyTurnRoll(E entity, S state)
     {
-        float turnStrength = 0.55F;
+        float turnStrength = 0.6F;
 
         state.turnRoll = entity.getYawVelocity() * turnStrength;
     }
