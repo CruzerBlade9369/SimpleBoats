@@ -1,5 +1,6 @@
 package com.cruzer.simpleboats;
 
+import com.cruzer.simpleboats.client.config.SimpleBoatsConfigManagerClient;
 import com.cruzer.simpleboats.client.model.*;
 import com.cruzer.simpleboats.client.renderer.MotorboatRenderer;
 import com.cruzer.simpleboats.client.renderer.SailboatRenderer;
@@ -78,5 +79,7 @@ public class SimpleBoatsClient implements ClientModInitializer
 
             ClientPlayNetworking.send(new SimpleBoatsControlPacket(up, down));
         });
+
+        SimpleBoatsConfigManagerClient.load();
     }
 }

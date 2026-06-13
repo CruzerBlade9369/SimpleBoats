@@ -1,5 +1,6 @@
 package com.cruzer.simpleboats.client.renderer;
 
+import com.cruzer.simpleboats.client.config.SimpleBoatsConfigManagerClient;
 import com.cruzer.simpleboats.client.renderer.state.PoweredBoatRenderState;
 import com.cruzer.simpleboats.entity.vehicle.AbstractPoweredBoatEntity;
 import net.minecraft.client.model.Model;
@@ -129,13 +130,14 @@ public abstract class AbstractPoweredBoatRenderer<
         float time = entity.age + tick + phaseOffset;
 
         boolean isRaining = entity.getEntityWorld().isRaining();
-        float rainMultiplier = isRaining ? 2.2F : 1.0F;
+        float rainAmplitudeMultiplier = isRaining ? 2.2F * SimpleBoatsConfigManagerClient.CONFIG.rainSwayMultiplier : 1.0F;
+        float rainSpeedMultiplier = isRaining ? 2.2F : 1.0F;
 
-        float baseSwayAmp = 0.5F;
-        float baseSwaySpeed = 0.05F;
+        float baseSwayAmp = 0.5F * SimpleBoatsConfigManagerClient.CONFIG.swayAmplitudeMultiplier;
+        float baseSwaySpeed = 0.05F * SimpleBoatsConfigManagerClient.CONFIG.swaySpeedMultiplier;
 
-        float swayAmp = baseSwayAmp * rainMultiplier;
-        float swaySpeed = baseSwaySpeed * rainMultiplier * 0.85f;
+        float swayAmp = baseSwayAmp * rainAmplitudeMultiplier;
+        float swaySpeed = baseSwaySpeed * rainSpeedMultiplier  * 0.85f;
 
         state.swayRoll =
                 MathHelper.sin(time * swaySpeed) * swayAmp;
@@ -147,20 +149,22 @@ public abstract class AbstractPoweredBoatRenderer<
     private void applySpeedPitch(E entity, S state)
     {
         float maxSpeedPitch = 3.5F;
+        float pitchMultiplier = SimpleBoatsConfigManagerClient.CONFIG.pitchMultiplier;
 
         float fwdSpd = entity.getForwardSpeed();
         float speedClamped = MathHelper.clamp(fwdSpd, 0.0F, 1.0F);
 
-        state.speedPitch = MathHelper.lerp(
+        state.speedPitch = pitchMultiplier *
+                MathHelper.lerp(
                 1F,
                 state.speedPitch,
                 speedClamped * maxSpeedPitch
-        );
+                );
     }
 
     private void applyTurnRoll(E entity, S state)
     {
-        float turnStrength = 0.6F;
+        float turnStrength = 0.6f * SimpleBoatsConfigManagerClient.CONFIG.turnLeanMultiplier;
 
         state.turnRoll = entity.getYawVelocity() * turnStrength;
     }

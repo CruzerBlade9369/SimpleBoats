@@ -21,9 +21,12 @@
 		"client": [
           "com.cruzer.simpleboats.SimpleBoatsClient"
 		],
-      "fabric-datagen": [
+      	"fabric-datagen": [
         "com.cruzer.simpleboats.datagen.SimpleBoatsDataGenerator"
-      ]
+      	],
+		"modmenu": [
+			"com.cruzer.simpleboats.client.config.SimpleBoatsModMenu"
+		]
     },
 	"mixins": [
 		"simpleboats.mixins.json",
@@ -37,7 +40,8 @@
 		"fabricloader": ">=0.18.1",
 		"minecraft": "~1.21.11",
 		"java": ">=21",
-		"fabric-api": "*"
+		"fabric-api": "*",
+		"yet_another_config_lib_v3": ">=3.8.2"
 	},
 	"suggests": {
 		"another-mod": "*"
