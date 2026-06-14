@@ -2,22 +2,21 @@ package com.cruzer.simpleboats.datagen;
 
 import com.cruzer.simpleboats.registry.SimpleBoatsTypes;
 import com.cruzer.simpleboats.registry.SimpleBoatsItems;
-import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
+import net.fabricmc.fabric.api.datagen.v1.FabricPackOutput;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricRecipeProvider;
-import net.minecraft.data.recipe.RecipeExporter;
-import net.minecraft.data.recipe.RecipeGenerator;
-import net.minecraft.item.Item;
-import net.minecraft.item.Items;
-import net.minecraft.recipe.book.RecipeCategory;
-import net.minecraft.registry.RegistryWrapper;
-import net.minecraft.registry.tag.ItemTags;
-
+import net.minecraft.core.HolderLookup;
+import net.minecraft.data.recipes.RecipeCategory;
+import net.minecraft.data.recipes.RecipeOutput;
+import net.minecraft.data.recipes.RecipeProvider;
+import net.minecraft.tags.ItemTags;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.Items;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 
 public class SimpleBoatsRecipeGenerator extends FabricRecipeProvider
 {
-    SimpleBoatsRecipeGenerator(FabricDataOutput gen, CompletableFuture<RegistryWrapper.WrapperLookup> registriesFuture)
+    SimpleBoatsRecipeGenerator(FabricPackOutput gen, CompletableFuture<HolderLookup.Provider> registriesFuture)
     {
         super(gen, registriesFuture);
     }
@@ -29,27 +28,27 @@ public class SimpleBoatsRecipeGenerator extends FabricRecipeProvider
     }
 
     @Override
-    protected RecipeGenerator getRecipeGenerator(RegistryWrapper.WrapperLookup registryLookup, RecipeExporter exporter)
+    protected RecipeProvider createRecipeProvider(HolderLookup.Provider registryLookup, RecipeOutput exporter)
     {
-        return new RecipeGenerator(registryLookup, exporter) {
+        return new RecipeProvider(registryLookup, exporter) {
             @Override
-            public void generate()
+            public void buildRecipes()
             {
                 for (Map.Entry<SimpleBoatsTypes, Item> entry : SimpleBoatsItems.MOTORBOAT_ITEMS.entrySet())
                 {
                     SimpleBoatsTypes type = entry.getKey();
                     Item boat = entry.getValue();
 
-                    createShaped(RecipeCategory.TRANSPORTATION, boat)
-                            .input('#', Items.BAMBOO)
-                            .input('S', type.getStrippedLog())
-                            .input('E', SimpleBoatsItems.OUTBOARD_MOTOR)
+                    shaped(RecipeCategory.TRANSPORTATION, boat)
+                            .define('#', Items.BAMBOO)
+                            .define('S', type.getStrippedLog())
+                            .define('E', SimpleBoatsItems.OUTBOARD_MOTOR)
                             .pattern("#S#")
                             .pattern("#S#")
                             .pattern("#E#")
-                            .criterion(hasItem(SimpleBoatsItems.OUTBOARD_MOTOR), conditionsFromItem(SimpleBoatsItems.OUTBOARD_MOTOR))
-                            .offerTo(
-                                    this.exporter
+                            .unlockedBy(getHasName(SimpleBoatsItems.OUTBOARD_MOTOR), has(SimpleBoatsItems.OUTBOARD_MOTOR))
+                            .save(
+                                    this.output
                             );
                 }
 
@@ -58,47 +57,47 @@ public class SimpleBoatsRecipeGenerator extends FabricRecipeProvider
                     SimpleBoatsTypes type = entry.getKey();
                     Item boat = entry.getValue();
 
-                    createShaped(RecipeCategory.TRANSPORTATION, boat)
-                            .input('#', Items.BAMBOO)
-                            .input('S', type.getStrippedLog())
-                            .input('E', SimpleBoatsItems.BOAT_SAIL)
+                    shaped(RecipeCategory.TRANSPORTATION, boat)
+                            .define('#', Items.BAMBOO)
+                            .define('S', type.getStrippedLog())
+                            .define('E', SimpleBoatsItems.BOAT_SAIL)
                             .pattern("#S#")
                             .pattern("#E#")
                             .pattern("#S#")
-                            .criterion(hasItem(SimpleBoatsItems.BOAT_SAIL), conditionsFromItem(SimpleBoatsItems.BOAT_SAIL))
-                            .offerTo(
-                                    this.exporter
+                            .unlockedBy(getHasName(SimpleBoatsItems.BOAT_SAIL), has(SimpleBoatsItems.BOAT_SAIL))
+                            .save(
+                                    this.output
                             );
                 }
 
-                createShaped(RecipeCategory.MISC, SimpleBoatsItems.OUTBOARD_MOTOR)
-                        .input('I', Items.IRON_INGOT)
-                        .input('P', Items.PISTON)
-                        .input('X', SimpleBoatsItems.BOAT_PROPELLER)
-                        .input('R', Items.REDSTONE)
+                shaped(RecipeCategory.MISC, SimpleBoatsItems.OUTBOARD_MOTOR)
+                        .define('I', Items.IRON_INGOT)
+                        .define('P', Items.PISTON)
+                        .define('X', SimpleBoatsItems.BOAT_PROPELLER)
+                        .define('R', Items.REDSTONE)
                         .pattern("IRI")
                         .pattern("IPI")
                         .pattern("IXI")
-                        .criterion(hasItem(SimpleBoatsItems.BOAT_PROPELLER), conditionsFromItem(SimpleBoatsItems.BOAT_PROPELLER))
-                        .offerTo(this.exporter);
+                        .unlockedBy(getHasName(SimpleBoatsItems.BOAT_PROPELLER), has(SimpleBoatsItems.BOAT_PROPELLER))
+                        .save(this.output);
 
-                createShaped(RecipeCategory.MISC, SimpleBoatsItems.BOAT_PROPELLER)
-                        .input('I', Items.IRON_INGOT)
+                shaped(RecipeCategory.MISC, SimpleBoatsItems.BOAT_PROPELLER)
+                        .define('I', Items.IRON_INGOT)
                         .pattern(" I ")
                         .pattern("III")
                         .pattern(" I ")
-                        .criterion(hasItem(Items.IRON_INGOT), conditionsFromItem(Items.IRON_INGOT))
-                        .offerTo(this.exporter);
+                        .unlockedBy(getHasName(Items.IRON_INGOT), has(Items.IRON_INGOT))
+                        .save(this.output);
 
-                createShaped(RecipeCategory.MISC, SimpleBoatsItems.BOAT_SAIL)
-                        .input('W', ItemTags.WOOL)
-                        .input('P', ItemTags.LOGS)
-                        .input('S', Items.STICK)
+                shaped(RecipeCategory.MISC, SimpleBoatsItems.BOAT_SAIL)
+                        .define('W', ItemTags.WOOL)
+                        .define('P', ItemTags.LOGS)
+                        .define('S', Items.STICK)
                         .pattern("WSW")
                         .pattern("WPW")
                         .pattern(" S ")
-                        .criterion("has_wool", conditionsFromTag(ItemTags.WOOL))
-                        .offerTo(this.exporter);
+                        .unlockedBy("has_wool", has(ItemTags.WOOL))
+                        .save(this.output);
             }
         };
     }

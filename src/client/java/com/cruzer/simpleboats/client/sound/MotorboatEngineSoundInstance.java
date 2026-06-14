@@ -4,11 +4,7 @@ import com.cruzer.simpleboats.entity.vehicle.MotorboatEntity;
 import com.cruzer.simpleboats.registry.SimpleBoatsSounds;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.minecraft.client.sound.MovingSoundInstance;
-import net.minecraft.client.sound.SoundInstance;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.sound.SoundCategory;
-import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.Mth;
 
 @Environment(EnvType.CLIENT)
 public class MotorboatEngineSoundInstance extends AbstractPoweredBoatSoundInstance
@@ -33,7 +29,7 @@ public class MotorboatEngineSoundInstance extends AbstractPoweredBoatSoundInstan
 
         float throttle = boat.getPowerLevel();
 
-        this.volume = MathHelper.lerp(throttle, 0.8f, 1.55f);
-        this.pitch = MathHelper.lerp(throttle, 0.4f, 1.55f);
+        this.volume = Mth.lerp(throttle, 0.8f, 1.55f);
+        this.pitch = Mth.lerp(throttle, 0.4f, 1.55f);
     }
 }

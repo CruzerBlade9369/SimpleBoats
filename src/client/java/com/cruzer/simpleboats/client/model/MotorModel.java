@@ -2,7 +2,13 @@ package com.cruzer.simpleboats.client.model;
 
 import com.cruzer.simpleboats.client.renderer.state.MotorboatRenderState;
 import net.minecraft.client.model.*;
-import net.minecraft.client.render.entity.model.EntityModel;
+import net.minecraft.client.model.geom.ModelPart;
+import net.minecraft.client.model.geom.PartPose;
+import net.minecraft.client.model.geom.builders.CubeDeformation;
+import net.minecraft.client.model.geom.builders.CubeListBuilder;
+import net.minecraft.client.model.geom.builders.LayerDefinition;
+import net.minecraft.client.model.geom.builders.MeshDefinition;
+import net.minecraft.client.model.geom.builders.PartDefinition;
 
 public class MotorModel extends EntityModel<MotorboatRenderState>
 {
@@ -19,72 +25,72 @@ public class MotorModel extends EntityModel<MotorboatRenderState>
         this.throttle = engine.getChild("throttle");
     }
 
-    public static TexturedModelData getMotorModelData()
+    public static LayerDefinition getMotorModelData()
     {
-        ModelData modelData = new ModelData();
-        ModelPartData root = modelData.getRoot();
+        MeshDefinition modelData = new MeshDefinition();
+        PartDefinition root = modelData.getRoot();
 
-        ModelPartData engine = root.addChild("engine", ModelPartBuilder.create().uv(276, 426).cuboid(-5.0F, -8.0F, -6.0F, 10.0F, 3.0F, 13.0F, new Dilation(0.0F))
-                .uv(92, 426).cuboid(-5.0F, -4.0F, -6.0F, 10.0F, 4.0F, 13.0F, new Dilation(0.0F))
-                .uv(414, 323).cuboid(-5.5F, -5.0F, -6.5F, 11.0F, 1.0F, 14.0F, new Dilation(0.0F))
-                .uv(210, 459).cuboid(-2.0F, -6.0F, -7.5F, 4.0F, 5.0F, 2.0F, new Dilation(0.0F))
-                .uv(460, 344).cuboid(-6.0F, -3.5F, -5.0F, 1.0F, 3.0F, 3.0F, new Dilation(0.0F))
-                .uv(244, 442).cuboid(-5.0F, -11.0F, -6.0F, 10.0F, 3.0F, 8.0F, new Dilation(0.0F))
-                .uv(220, 149).cuboid(-2.0F, 0.0F, -4.0F, 4.0F, 11.0F, 5.0F, new Dilation(0.0F))
-                .uv(220, 115).cuboid(-3.0F, 11.0F, -5.0F, 6.0F, 9.0F, 7.0F, new Dilation(0.0F))
-                .uv(122, 412).cuboid(-2.5F, 7.0F, -5.5F, 5.0F, 3.0F, 7.0F, new Dilation(0.0F))
-                .uv(248, 429).cuboid(-2.5F, 3.0F, -5.5F, 5.0F, 3.0F, 7.0F, new Dilation(0.0F))
-                .uv(140, 453).cuboid(-2.0F, 20.0F, -4.0F, 4.0F, 1.0F, 5.0F, new Dilation(0.0F)), ModelTransform.origin(0.0F, -13.0F, 48.0F));
+        PartDefinition engine = root.addOrReplaceChild("engine", CubeListBuilder.create().texOffs(276, 426).addBox(-5.0F, -8.0F, -6.0F, 10.0F, 3.0F, 13.0F, new CubeDeformation(0.0F))
+                .texOffs(92, 426).addBox(-5.0F, -4.0F, -6.0F, 10.0F, 4.0F, 13.0F, new CubeDeformation(0.0F))
+                .texOffs(414, 323).addBox(-5.5F, -5.0F, -6.5F, 11.0F, 1.0F, 14.0F, new CubeDeformation(0.0F))
+                .texOffs(210, 459).addBox(-2.0F, -6.0F, -7.5F, 4.0F, 5.0F, 2.0F, new CubeDeformation(0.0F))
+                .texOffs(460, 344).addBox(-6.0F, -3.5F, -5.0F, 1.0F, 3.0F, 3.0F, new CubeDeformation(0.0F))
+                .texOffs(244, 442).addBox(-5.0F, -11.0F, -6.0F, 10.0F, 3.0F, 8.0F, new CubeDeformation(0.0F))
+                .texOffs(220, 149).addBox(-2.0F, 0.0F, -4.0F, 4.0F, 11.0F, 5.0F, new CubeDeformation(0.0F))
+                .texOffs(220, 115).addBox(-3.0F, 11.0F, -5.0F, 6.0F, 9.0F, 7.0F, new CubeDeformation(0.0F))
+                .texOffs(122, 412).addBox(-2.5F, 7.0F, -5.5F, 5.0F, 3.0F, 7.0F, new CubeDeformation(0.0F))
+                .texOffs(248, 429).addBox(-2.5F, 3.0F, -5.5F, 5.0F, 3.0F, 7.0F, new CubeDeformation(0.0F))
+                .texOffs(140, 453).addBox(-2.0F, 20.0F, -4.0F, 4.0F, 1.0F, 5.0F, new CubeDeformation(0.0F)), PartPose.offset(0.0F, -13.0F, 48.0F));
 
-        ModelPartData cube_r31 = engine.addChild("cube_r31", ModelPartBuilder.create().uv(0, 431).cuboid(-6.0F, 0.0F, -2.0F, 11.0F, 3.0F, 9.0F, new Dilation(0.0F)), ModelTransform.of(0.5F, -11.0F, 2.0F, -0.3927F, 0.0F, 0.0F));
+        PartDefinition cube_r31 = engine.addOrReplaceChild("cube_r31", CubeListBuilder.create().texOffs(0, 431).addBox(-6.0F, 0.0F, -2.0F, 11.0F, 3.0F, 9.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.5F, -11.0F, 2.0F, -0.3927F, 0.0F, 0.0F));
 
-        ModelPartData cube_r32 = engine.addChild("cube_r32", ModelPartBuilder.create().uv(58, 403).cuboid(-1.5F, -1.0F, -1.5F, 3.0F, 1.0F, 3.0F, new Dilation(0.0F)), ModelTransform.of(0.0F, -11.0F, -3.5F, 0.0F, -0.7854F, 0.0F));
+        PartDefinition cube_r32 = engine.addOrReplaceChild("cube_r32", CubeListBuilder.create().texOffs(58, 403).addBox(-1.5F, -1.0F, -1.5F, 3.0F, 1.0F, 3.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, -11.0F, -3.5F, 0.0F, -0.7854F, 0.0F));
 
-        ModelPartData throttle = engine.addChild("throttle", ModelPartBuilder.create(), ModelTransform.origin(-7.5F, -2.0F, -3.5F));
+        PartDefinition throttle = engine.addOrReplaceChild("throttle", CubeListBuilder.create(), PartPose.offset(-7.5F, -2.0F, -3.5F));
 
-        ModelPartData cube_r33 = throttle.addChild("cube_r33", ModelPartBuilder.create().uv(70, 403).cuboid(-1.5F, -1.0F, -1.0F, 3.0F, 2.0F, 2.0F, new Dilation(0.0F)), ModelTransform.of(0.0F, 0.0F, 0.0F, -0.7854F, 0.0F, 0.0F));
+        PartDefinition cube_r33 = throttle.addOrReplaceChild("cube_r33", CubeListBuilder.create().texOffs(70, 403).addBox(-1.5F, -1.0F, -1.0F, 3.0F, 2.0F, 2.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, 0.0F, 0.0F, -0.7854F, 0.0F, 0.0F));
 
-        ModelPartData cube_r34 = throttle.addChild("cube_r34", ModelPartBuilder.create().uv(40, 431).cuboid(-0.5F, -0.5F, -0.75F, 1.0F, 1.0F, 8.0F, new Dilation(0.0F))
-                .uv(238, 162).cuboid(-0.5F, -0.5F, 0.25F, 1.0F, 1.0F, 1.0F, new Dilation(0.2F))
-                .uv(460, 338).cuboid(-0.5F, -0.5F, -5.75F, 1.0F, 1.0F, 5.0F, new Dilation(0.2F)), ModelTransform.of(-0.75F, -3.4994F, -6.9922F, -0.3927F, 0.0F, 0.0F));
+        PartDefinition cube_r34 = throttle.addOrReplaceChild("cube_r34", CubeListBuilder.create().texOffs(40, 431).addBox(-0.5F, -0.5F, -0.75F, 1.0F, 1.0F, 8.0F, new CubeDeformation(0.0F))
+                .texOffs(238, 162).addBox(-0.5F, -0.5F, 0.25F, 1.0F, 1.0F, 1.0F, new CubeDeformation(0.2F))
+                .texOffs(460, 338).addBox(-0.5F, -0.5F, -5.75F, 1.0F, 1.0F, 5.0F, new CubeDeformation(0.2F)), PartPose.offsetAndRotation(-0.75F, -3.4994F, -6.9922F, -0.3927F, 0.0F, 0.0F));
 
-        ModelPartData propeller_director = root.addChild("propeller_director", ModelPartBuilder.create().uv(362, 450).cuboid(-1.0F, 12.0F, -2.5F, 2.0F, 6.0F, 5.0F, new Dilation(0.0F))
-                .uv(220, 99).cuboid(-3.0F, 0.0F, -3.5F, 6.0F, 9.0F, 7.0F, new Dilation(0.0F))
-                .uv(436, 251).cuboid(-7.0F, 6.0F, -4.5F, 14.0F, 1.0F, 7.0F, new Dilation(0.0F))
-                .uv(434, 417).cuboid(-3.0F, 9.0F, -3.5F, 6.0F, 3.0F, 12.0F, new Dilation(0.0F)), ModelTransform.origin(0.0F, 8.0F, 46.5F));
+        PartDefinition propeller_director = root.addOrReplaceChild("propeller_director", CubeListBuilder.create().texOffs(362, 450).addBox(-1.0F, 12.0F, -2.5F, 2.0F, 6.0F, 5.0F, new CubeDeformation(0.0F))
+                .texOffs(220, 99).addBox(-3.0F, 0.0F, -3.5F, 6.0F, 9.0F, 7.0F, new CubeDeformation(0.0F))
+                .texOffs(436, 251).addBox(-7.0F, 6.0F, -4.5F, 14.0F, 1.0F, 7.0F, new CubeDeformation(0.0F))
+                .texOffs(434, 417).addBox(-3.0F, 9.0F, -3.5F, 6.0F, 3.0F, 12.0F, new CubeDeformation(0.0F)), PartPose.offset(0.0F, 8.0F, 46.5F));
 
-        ModelPartData cube_r35 = propeller_director.addChild("cube_r35", ModelPartBuilder.create().uv(280, 442).cuboid(-1.5F, -1.5F, -3.5F, 3.0F, 3.0F, 8.0F, new Dilation(0.0F)), ModelTransform.of(0.0F, 18.5F, 0.0F, 0.0F, 0.0F, 0.7854F));
+        PartDefinition cube_r35 = propeller_director.addOrReplaceChild("cube_r35", CubeListBuilder.create().texOffs(280, 442).addBox(-1.5F, -1.5F, -3.5F, 3.0F, 3.0F, 8.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, 18.5F, 0.0F, 0.0F, 0.0F, 0.7854F));
 
-        ModelPartData propeller = propeller_director.addChild("propeller", ModelPartBuilder.create(), ModelTransform.origin(0.0F, 18.5F, 6.0F));
+        PartDefinition propeller = propeller_director.addOrReplaceChild("propeller", CubeListBuilder.create(), PartPose.offset(0.0F, 18.5F, 6.0F));
 
-        ModelPartData cube_r36 = propeller.addChild("cube_r36", ModelPartBuilder.create().uv(242, 162).cuboid(-0.5F, -0.5F, -1.5F, 1.0F, 1.0F, 1.0F, new Dilation(0.0F))
-                .uv(222, 459).cuboid(-1.0F, -1.0F, -0.5F, 2.0F, 2.0F, 3.0F, new Dilation(0.0F)), ModelTransform.of(0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.7854F));
+        PartDefinition cube_r36 = propeller.addOrReplaceChild("cube_r36", CubeListBuilder.create().texOffs(242, 162).addBox(-0.5F, -0.5F, -1.5F, 1.0F, 1.0F, 1.0F, new CubeDeformation(0.0F))
+                .texOffs(222, 459).addBox(-1.0F, -1.0F, -0.5F, 2.0F, 2.0F, 3.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.7854F));
 
-        ModelPartData propeller1 = propeller.addChild("propeller1", ModelPartBuilder.create(), ModelTransform.origin(0.4619F, 3.0F, 0.8087F));
+        PartDefinition propeller1 = propeller.addOrReplaceChild("propeller1", CubeListBuilder.create(), PartPose.offset(0.4619F, 3.0F, 0.8087F));
 
-        ModelPartData cube_r37 = propeller1.addChild("cube_r37", ModelPartBuilder.create().uv(360, 440).cuboid(-1.5F, -3.0F, -0.5F, 3.0F, 6.0F, 1.0F, new Dilation(0.0F)), ModelTransform.of(0.0F, 0.0F, 0.0F, 0.0F, 0.3927F, 0.0F));
+        PartDefinition cube_r37 = propeller1.addOrReplaceChild("cube_r37", CubeListBuilder.create().texOffs(360, 440).addBox(-1.5F, -3.0F, -0.5F, 3.0F, 6.0F, 1.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, 0.0F, 0.0F, 0.0F, 0.3927F, 0.0F));
 
-        ModelPartData propeller2 = propeller.addChild("propeller2", ModelPartBuilder.create(), ModelTransform.origin(3.0F, -0.4619F, 0.8087F));
+        PartDefinition propeller2 = propeller.addOrReplaceChild("propeller2", CubeListBuilder.create(), PartPose.offset(3.0F, -0.4619F, 0.8087F));
 
-        ModelPartData cube_r38 = propeller2.addChild("cube_r38", ModelPartBuilder.create().uv(220, 165).cuboid(-3.0F, -1.5F, -0.5F, 6.0F, 3.0F, 1.0F, new Dilation(0.0F)), ModelTransform.of(0.0F, 0.0F, 0.0F, 0.3927F, 0.0F, 0.0F));
+        PartDefinition cube_r38 = propeller2.addOrReplaceChild("cube_r38", CubeListBuilder.create().texOffs(220, 165).addBox(-3.0F, -1.5F, -0.5F, 6.0F, 3.0F, 1.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, 0.0F, 0.0F, 0.3927F, 0.0F, 0.0F));
 
-        ModelPartData propeller3 = propeller.addChild("propeller3", ModelPartBuilder.create(), ModelTransform.origin(-0.4619F, -3.0F, 0.8087F));
+        PartDefinition propeller3 = propeller.addOrReplaceChild("propeller3", CubeListBuilder.create(), PartPose.offset(-0.4619F, -3.0F, 0.8087F));
 
-        ModelPartData cube_r39 = propeller3.addChild("cube_r39", ModelPartBuilder.create().uv(128, 443).cuboid(-1.5F, -3.0F, -0.5F, 3.0F, 6.0F, 1.0F, new Dilation(0.0F)), ModelTransform.of(0.0F, 0.0F, 0.0F, 0.0F, -0.3927F, 0.0F));
+        PartDefinition cube_r39 = propeller3.addOrReplaceChild("cube_r39", CubeListBuilder.create().texOffs(128, 443).addBox(-1.5F, -3.0F, -0.5F, 3.0F, 6.0F, 1.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, 0.0F, 0.0F, 0.0F, -0.3927F, 0.0F));
 
-        ModelPartData propeller4 = propeller.addChild("propeller4", ModelPartBuilder.create(), ModelTransform.origin(-3.0F, 0.4619F, 0.8087F));
+        PartDefinition propeller4 = propeller.addOrReplaceChild("propeller4", CubeListBuilder.create(), PartPose.offset(-3.0F, 0.4619F, 0.8087F));
 
-        ModelPartData cube_r40 = propeller4.addChild("cube_r40", ModelPartBuilder.create().uv(234, 165).cuboid(-3.0F, -1.5F, -0.5F, 6.0F, 3.0F, 1.0F, new Dilation(0.0F)), ModelTransform.of(0.0F, 0.0F, 0.0F, -0.3927F, 0.0F, 0.0F));
+        PartDefinition cube_r40 = propeller4.addOrReplaceChild("cube_r40", CubeListBuilder.create().texOffs(234, 165).addBox(-3.0F, -1.5F, -0.5F, 6.0F, 3.0F, 1.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, 0.0F, 0.0F, -0.3927F, 0.0F, 0.0F));
 
 
-        return TexturedModelData.of(modelData, 512, 512);
+        return LayerDefinition.create(modelData, 512, 512);
     }
 
     @Override
-    public void setAngles(MotorboatRenderState rs)
+    public void setupAnim(MotorboatRenderState rs)
     {
-        prop_parent.roll = rs.propellerRotation;
-        prop_dir.yaw = rs.propDirYaw;
-        throttle.pitch = rs.throttleLeverPitch;
+        prop_parent.zRot = rs.propellerRotation;
+        prop_dir.yRot = rs.propDirYaw;
+        throttle.xRot = rs.throttleLeverPitch;
     }
 }

@@ -37,11 +37,11 @@
 	],
     "accessWidener": "simpleboats.accesswidener",
 	"depends": {
-		"fabricloader": ">=0.18.1",
-		"minecraft": "~1.21.11",
-		"java": ">=21",
+		"fabricloader": ">=0.19.3",
+		"minecraft": "26.1.*",
+		"java": ">=25",
 		"fabric-api": "*",
-		"yet_another_config_lib_v3": ">=3.8.2"
+		"yet_another_config_lib_v3": ">=3.9.3"
 	},
 	"suggests": {
 		"another-mod": "*"

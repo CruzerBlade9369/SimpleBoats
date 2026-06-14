@@ -1,27 +1,26 @@
 package com.cruzer.simpleboats.client.model;
 
 import com.cruzer.simpleboats.SimpleBoats;
-import net.minecraft.client.render.entity.model.EntityModelLayer;
-import net.minecraft.util.Identifier;
-
 import java.util.List;
+import net.minecraft.client.model.geom.ModelLayerLocation;
+import net.minecraft.resources.Identifier;
 
 public class SimpleBoatsModelLayers
 {
-    public static final EntityModelLayer BOAT_HULL =
-            new EntityModelLayer(Identifier.of(SimpleBoats.MOD_ID, "generic_boat"), "hull");
+    public static final ModelLayerLocation BOAT_HULL =
+            new ModelLayerLocation(Identifier.fromNamespaceAndPath(SimpleBoats.MOD_ID, "generic_boat"), "hull");
 
-    public static final EntityModelLayer MOTORBOAT_MOTOR =
-            new EntityModelLayer(Identifier.of(SimpleBoats.MOD_ID, "motorboat"), "motor");
+    public static final ModelLayerLocation MOTORBOAT_MOTOR =
+            new ModelLayerLocation(Identifier.fromNamespaceAndPath(SimpleBoats.MOD_ID, "motorboat"), "motor");
 
-    public static final EntityModelLayer SAILBOAT_TILLER =
-            new EntityModelLayer(Identifier.of(SimpleBoats.MOD_ID, "sailboat"), "tiller");
+    public static final ModelLayerLocation SAILBOAT_TILLER =
+            new ModelLayerLocation(Identifier.fromNamespaceAndPath(SimpleBoats.MOD_ID, "sailboat"), "tiller");
 
-    public static final EntityModelLayer BOAT_WATER_MASK =
-            new EntityModelLayer(Identifier.of(SimpleBoats.MOD_ID, "generic_boat"), "water");
+    public static final ModelLayerLocation BOAT_WATER_MASK =
+            new ModelLayerLocation(Identifier.fromNamespaceAndPath(SimpleBoats.MOD_ID, "generic_boat"), "water");
 
-    public static final EntityModelLayer SAILBOAT_SAIL_BASE =
-            new EntityModelLayer(Identifier.of(SimpleBoats.MOD_ID, "sailboat"), "sail");
+    public static final ModelLayerLocation SAILBOAT_SAIL_BASE =
+            new ModelLayerLocation(Identifier.fromNamespaceAndPath(SimpleBoats.MOD_ID, "sailboat"), "sail");
 
     public static final List<ModelLayerEntry> ALL = List.of(
             new ModelLayerEntry(BOAT_HULL, GenericBoatModel::getTexturedModelData),

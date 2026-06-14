@@ -4,19 +4,18 @@ import com.cruzer.simpleboats.SimpleBoats;
 import com.cruzer.simpleboats.entity.vehicle.AbstractPoweredBoatEntity;
 import com.cruzer.simpleboats.entity.vehicle.MotorboatEntity;
 import com.cruzer.simpleboats.entity.vehicle.SailboatEntity;
-import net.minecraft.entity.EntityType;
-import net.minecraft.entity.SpawnGroup;
-import net.minecraft.item.Item;
-import net.minecraft.registry.Registries;
-import net.minecraft.registry.Registry;
-import net.minecraft.registry.RegistryKey;
-import net.minecraft.registry.RegistryKeys;
-import net.minecraft.util.Identifier;
-import net.minecraft.world.World;
-
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Supplier;
+import net.minecraft.core.Registry;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.MobCategory;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.level.Level;
 
 public class SimpleBoatsEntities
 {
@@ -35,17 +34,17 @@ public class SimpleBoatsEntities
         {
             Supplier<Item> itemSupplier = () -> SimpleBoatsItems.MOTORBOAT_ITEMS.get(type);
 
-            RegistryKey<EntityType<?>> key =
-                    RegistryKey.of(RegistryKeys.ENTITY_TYPE,
-                            Identifier.of(SimpleBoats.MOD_ID, type.getName() + "_motorboat"));
+            ResourceKey<EntityType<?>> key =
+                    ResourceKey.create(Registries.ENTITY_TYPE,
+                            Identifier.fromNamespaceAndPath(SimpleBoats.MOD_ID, type.getName() + "_motorboat"));
 
             EntityType<MotorboatEntity> entityType =
                     Registry.register(
-                            Registries.ENTITY_TYPE,
+                            BuiltInRegistries.ENTITY_TYPE,
                             key,
-                            EntityType.Builder.create(getFactory(MotorboatEntity::new, itemSupplier), SpawnGroup.MISC)
-                                    .dimensions(4.4f, 0.675f)
-                                    .maxTrackingRange(80)
+                            EntityType.Builder.of(getFactory(MotorboatEntity::new, itemSupplier), MobCategory.MISC)
+                                    .sized(4.4f, 0.675f)
+                                    .clientTrackingRange(80)
                                     .build(key)
                     );
 
@@ -59,17 +58,17 @@ public class SimpleBoatsEntities
         {
             Supplier<Item> itemSupplier = () -> SimpleBoatsItems.SAILBOAT_ITEMS.get(type);
 
-            RegistryKey<EntityType<?>> key =
-                    RegistryKey.of(RegistryKeys.ENTITY_TYPE,
-                            Identifier.of(SimpleBoats.MOD_ID, type.getName() + "_sailboat"));
+            ResourceKey<EntityType<?>> key =
+                    ResourceKey.create(Registries.ENTITY_TYPE,
+                            Identifier.fromNamespaceAndPath(SimpleBoats.MOD_ID, type.getName() + "_sailboat"));
 
             EntityType<SailboatEntity> entityType =
                     Registry.register(
-                            Registries.ENTITY_TYPE,
+                            BuiltInRegistries.ENTITY_TYPE,
                             key,
-                            EntityType.Builder.create(getFactory(SailboatEntity::new, itemSupplier), SpawnGroup.MISC)
-                                    .dimensions(4.4f, 0.675f)
-                                    .maxTrackingRange(80)
+                            EntityType.Builder.of(getFactory(SailboatEntity::new, itemSupplier), MobCategory.MISC)
+                                    .sized(4.4f, 0.675f)
+                                    .clientTrackingRange(80)
                                     .build(key)
                     );
 
@@ -89,7 +88,7 @@ public class SimpleBoatsEntities
     public interface BoatConstructor<T extends AbstractPoweredBoatEntity> {
         T create(
                 EntityType<T> entityType,
-                World world,
+                Level world,
                 Supplier<Item> itemSupplier
         );
     }

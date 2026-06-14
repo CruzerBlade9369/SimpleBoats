@@ -1,9 +1,9 @@
 package com.cruzer.simpleboats.client.renderer.state;
 
-import net.minecraft.client.render.entity.state.BoatEntityRenderState;
-import net.minecraft.util.Identifier;
+import net.minecraft.client.renderer.entity.state.BoatRenderState;
+import net.minecraft.resources.Identifier;
 
-public class PoweredBoatRenderState extends BoatEntityRenderState
+public class PoweredBoatRenderState extends BoatRenderState
 {
     public float pitch;
     public Identifier texture;

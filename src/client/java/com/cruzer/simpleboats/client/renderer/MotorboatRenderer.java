@@ -3,25 +3,25 @@ package com.cruzer.simpleboats.client.renderer;
 import com.cruzer.simpleboats.client.model.*;
 import com.cruzer.simpleboats.client.renderer.state.MotorboatRenderState;
 import com.cruzer.simpleboats.entity.vehicle.MotorboatEntity;
-import net.minecraft.client.render.OverlayTexture;
-import net.minecraft.client.render.RenderLayers;
-import net.minecraft.client.render.command.OrderedRenderCommandQueue;
-import net.minecraft.client.render.entity.EntityRendererFactory;
-import net.minecraft.client.render.entity.model.EntityModel;
-import net.minecraft.client.render.entity.model.EntityModelLayer;
-import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.util.Identifier;
-import net.minecraft.util.math.MathHelper;
+import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.client.model.EntityModel;
+import net.minecraft.client.model.geom.ModelLayerLocation;
+import net.minecraft.client.renderer.SubmitNodeCollector;
+import net.minecraft.client.renderer.entity.EntityRendererProvider;
+import net.minecraft.client.renderer.rendertype.RenderTypes;
+import net.minecraft.client.renderer.texture.OverlayTexture;
+import net.minecraft.resources.Identifier;
+import net.minecraft.util.Mth;
 
 public class MotorboatRenderer extends AbstractPoweredBoatRenderer<MotorboatEntity, MotorboatRenderState>
 {
     private final Identifier motorTexture;
     private final MotorModel motorModel;
 
-    public MotorboatRenderer(EntityRendererFactory.Context ctx, Identifier texture)
+    public MotorboatRenderer(EntityRendererProvider.Context ctx, Identifier texture)
     {
         super(ctx, SimpleBoatsModelLayers.BOAT_HULL, texture);
-        this.motorModel = new MotorModel(ctx.getPart(SimpleBoatsModelLayers.MOTORBOAT_MOTOR));
+        this.motorModel = new MotorModel(ctx.bakeLayer(SimpleBoatsModelLayers.MOTORBOAT_MOTOR));
         this.motorTexture = texture;
     }
 
@@ -32,18 +32,18 @@ public class MotorboatRenderer extends AbstractPoweredBoatRenderer<MotorboatEnti
     }
 
     @Override
-    protected EntityModelLayer getWaterMaskLayer()
+    protected ModelLayerLocation getWaterMaskLayer()
     {
         return SimpleBoatsModelLayers.BOAT_WATER_MASK;
     }
 
     @Override
     protected EntityModel<MotorboatRenderState> createBaseModel(
-            EntityRendererFactory.Context ctx,
-            EntityModelLayer layer
+            EntityRendererProvider.Context ctx,
+            ModelLayerLocation layer
     )
     {
-        return new GenericBoatModel<>(ctx.getPart(layer));
+        return new GenericBoatModel<>(ctx.bakeLayer(layer));
     }
 
     @Override
@@ -54,7 +54,7 @@ public class MotorboatRenderer extends AbstractPoweredBoatRenderer<MotorboatEnti
     )
     {
         state.motorTexture = motorTexture;
-        state.propellerRotation = -MathHelper.lerpAngleRadians(
+        state.propellerRotation = -Mth.rotLerpRad(
                 tick,
                 entity.getPropellerAngle()[1],
                 entity.getPropellerAngle()[0]
@@ -66,17 +66,17 @@ public class MotorboatRenderer extends AbstractPoweredBoatRenderer<MotorboatEnti
     @Override
     protected void renderAttachments(
             MotorboatRenderState state,
-            MatrixStack matrices,
-            OrderedRenderCommandQueue queue
+            PoseStack matrices,
+            SubmitNodeCollector queue
     )
     {
         queue.submitModel(
                 motorModel,
                 state,
                 matrices,
-                RenderLayers.entityTranslucent(state.motorTexture),
-                state.light,
-                OverlayTexture.DEFAULT_UV,
+                RenderTypes.entityTranslucent(state.motorTexture),
+                state.lightCoords,
+                OverlayTexture.NO_OVERLAY,
                 state.outlineColor,
                 null
         );
