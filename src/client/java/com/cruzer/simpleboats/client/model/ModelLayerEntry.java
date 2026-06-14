@@ -1,9 +1,9 @@
 package com.cruzer.simpleboats.client.model;
 
 import net.fabricmc.fabric.api.client.rendering.v1.EntityModelLayerRegistry;
-import net.minecraft.client.render.entity.model.EntityModelLayer;
+import net.minecraft.client.model.geom.ModelLayerLocation;
 
 public record ModelLayerEntry(
-        EntityModelLayer layer,
+        ModelLayerLocation layer,
         EntityModelLayerRegistry.TexturedModelDataProvider provider
 ) {}

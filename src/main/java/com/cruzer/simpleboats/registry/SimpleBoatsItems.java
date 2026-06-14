@@ -4,13 +4,15 @@ import com.cruzer.simpleboats.SimpleBoats;
 import com.cruzer.simpleboats.item.MotorboatItem;
 import com.cruzer.simpleboats.item.SailboatItem;
 import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
-import net.minecraft.item.*;
-import net.minecraft.registry.Registries;
-import net.minecraft.registry.Registry;
-import net.minecraft.registry.RegistryKey;
-import net.minecraft.registry.RegistryKeys;
-import net.minecraft.util.Identifier;
-
+import net.minecraft.core.Registry;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.CreativeModeTab;
+import net.minecraft.world.item.CreativeModeTabs;
+import net.minecraft.world.item.Item;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
@@ -29,9 +31,9 @@ public class SimpleBoatsItems
         registerMotorboats();
         registerSailboats();
 
-        addToItemGroup(BOAT_PROPELLER, ItemGroups.INGREDIENTS);
-        addToItemGroup(OUTBOARD_MOTOR, ItemGroups.INGREDIENTS);
-        addToItemGroup(BOAT_SAIL, ItemGroups.INGREDIENTS);
+        addToItemGroup(BOAT_PROPELLER, CreativeModeTabs.INGREDIENTS);
+        addToItemGroup(OUTBOARD_MOTOR, CreativeModeTabs.INGREDIENTS);
+        addToItemGroup(BOAT_SAIL, CreativeModeTabs.INGREDIENTS);
     }
 
     private static void registerMotorboats()
@@ -44,11 +46,11 @@ public class SimpleBoatsItems
                             SimpleBoatsEntities.MOTORBOAT_TYPES.get(type),
                             settings
                     ),
-                    new Item.Settings().maxCount(1)
+                    new Item.Properties().stacksTo(1)
             );
 
             MOTORBOAT_ITEMS.put(type, item);
-            addToItemGroup(item, ItemGroups.TOOLS);
+            addToItemGroup(item, CreativeModeTabs.TOOLS_AND_UTILITIES);
         }
     }
 
@@ -62,38 +64,38 @@ public class SimpleBoatsItems
                             SimpleBoatsEntities.SAILBOAT_TYPES.get(type),
                             settings
                     ),
-                    new Item.Settings().maxCount(1)
+                    new Item.Properties().stacksTo(1)
             );
 
             SAILBOAT_ITEMS.put(type, item);
-            addToItemGroup(item, ItemGroups.TOOLS);
+            addToItemGroup(item, CreativeModeTabs.TOOLS_AND_UTILITIES);
         }
     }
 
-    private static void addToItemGroup(Item item, RegistryKey<ItemGroup> group)
+    private static void addToItemGroup(Item item, ResourceKey<CreativeModeTab> group)
     {
         ItemGroupEvents.modifyEntriesEvent(group)
-                .register((itemGroup) -> itemGroup.add(item));
+                .register((itemGroup) -> itemGroup.accept(item));
     }
 
-    private static RegistryKey<Item> keyOf(String id)
+    private static ResourceKey<Item> keyOf(String id)
     {
-        return RegistryKey.of(RegistryKeys.ITEM, Identifier.of(SimpleBoats.MOD_ID, id));
+        return ResourceKey.create(Registries.ITEM, Identifier.fromNamespaceAndPath(SimpleBoats.MOD_ID, id));
     }
 
     private static Item register(String id)
     {
-        return register(keyOf(id), Item::new, new Item.Settings());
+        return register(keyOf(id), Item::new, new Item.Properties());
     }
 
-    private static Item register(RegistryKey<Item> key, Function<Item.Settings, Item> factory, Item.Settings settings)
+    private static Item register(ResourceKey<Item> key, Function<Item.Properties, Item> factory, Item.Properties settings)
     {
-        Item item = factory.apply(settings.registryKey(key));
+        Item item = factory.apply(settings.setId(key));
         if (item instanceof BlockItem blockItem)
         {
-            blockItem.appendBlocks(Item.BLOCK_ITEMS, item);
+            blockItem.registerBlocks(Item.BY_BLOCK, item);
         }
 
-        return Registry.register(Registries.ITEM, key, item);
+        return Registry.register(BuiltInRegistries.ITEM, key, item);
     }
 }

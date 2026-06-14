@@ -1,92 +1,91 @@
 package com.cruzer.simpleboats.item;
 
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityType;
-import net.minecraft.entity.SpawnReason;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.vehicle.AbstractBoatEntity;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.predicate.entity.EntityPredicates;
-import net.minecraft.server.world.ServerWorld;
-import net.minecraft.stat.Stats;
-import net.minecraft.util.ActionResult;
-import net.minecraft.util.Hand;
-import net.minecraft.util.hit.HitResult;
-import net.minecraft.util.math.Box;
-import net.minecraft.util.math.Vec3d;
-import net.minecraft.world.RaycastContext;
-import net.minecraft.world.World;
-import net.minecraft.world.event.GameEvent;
-
 import java.util.List;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.stats.Stats;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntitySelector;
+import net.minecraft.world.entity.EntitySpawnReason;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.vehicle.boat.AbstractBoat;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.ClipContext;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.gameevent.GameEvent;
+import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.HitResult;
+import net.minecraft.world.phys.Vec3;
 
 public abstract class AbstractPoweredBoatItem extends Item
 {
-    protected final EntityType<? extends AbstractBoatEntity> boatEntityType;
+    protected final EntityType<? extends AbstractBoat> boatEntityType;
 
-    public AbstractPoweredBoatItem(EntityType<? extends AbstractBoatEntity> type, Settings settings) {
+    public AbstractPoweredBoatItem(EntityType<? extends AbstractBoat> type, Properties settings) {
         super(settings);
         this.boatEntityType = type;
     }
 
     @Override
-    public ActionResult use(World world, PlayerEntity user, Hand hand)
+    public InteractionResult use(Level world, Player user, InteractionHand hand)
     {
-        ItemStack stack = user.getStackInHand(hand);
+        ItemStack stack = user.getItemInHand(hand);
 
-        HitResult hit = raycast(world, user, RaycastContext.FluidHandling.ANY);
+        HitResult hit = getPlayerPOVHitResult(world, user, ClipContext.Fluid.ANY);
 
-        if (hit.getType() == HitResult.Type.MISS) return ActionResult.PASS;
+        if (hit.getType() == HitResult.Type.MISS) return InteractionResult.PASS;
 
-        Vec3d dir = user.getRotationVec(1.0f);
-        List<Entity> list = world.getOtherEntities(
+        Vec3 dir = user.getViewVector(1.0f);
+        List<Entity> list = world.getEntities(
                 user,
-                user.getBoundingBox().stretch(dir.multiply(5.0)).expand(1.0),
-                EntityPredicates.CAN_HIT
+                user.getBoundingBox().expandTowards(dir.scale(5.0)).inflate(1.0),
+                EntitySelector.CAN_BE_PICKED
         );
 
-        Vec3d eyePos = user.getEyePos();
+        Vec3 eyePos = user.getEyePosition();
 
         for (Entity e : list)
         {
-            Box box = e.getBoundingBox().expand(e.getTargetingMargin());
-            if (box.contains(eyePos)) return ActionResult.PASS;
+            AABB box = e.getBoundingBox().inflate(e.getPickRadius());
+            if (box.contains(eyePos)) return InteractionResult.PASS;
         }
 
         if (hit.getType() == HitResult.Type.BLOCK)
         {
-            AbstractBoatEntity boat = createBoat(world, hit, stack, user);
-            if (boat == null) return ActionResult.FAIL;
+            AbstractBoat boat = createBoat(world, hit, stack, user);
+            if (boat == null) return InteractionResult.FAIL;
 
-            boat.setYaw(user.getYaw());
+            boat.setYRot(user.getYRot());
 
-            if(!world.isSpaceEmpty(boat, boat.getBoundingBox())) return ActionResult.FAIL;
+            if(!world.noCollision(boat, boat.getBoundingBox())) return InteractionResult.FAIL;
 
-            if(!world.isClient())
+            if(!world.isClientSide())
             {
-                world.spawnEntity(boat);
-                world.emitGameEvent(user, GameEvent.ENTITY_PLACE, boat.getBlockPos());
-                stack.decrementUnlessCreative(1, user);
+                world.addFreshEntity(boat);
+                world.gameEvent(user, GameEvent.ENTITY_PLACE, boat.blockPosition());
+                stack.consume(1, user);
             }
 
-            user.incrementStat(Stats.USED.getOrCreateStat(this));
-            return ActionResult.SUCCESS;
+            user.awardStat(Stats.ITEM_USED.get(this));
+            return InteractionResult.SUCCESS;
         }
 
-        return ActionResult.PASS;
+        return InteractionResult.PASS;
     }
 
-    private AbstractBoatEntity createBoat(World world, HitResult hit, ItemStack stack, PlayerEntity player) {
+    private AbstractBoat createBoat(Level world, HitResult hit, ItemStack stack, Player player) {
 
-        AbstractBoatEntity boat = this.boatEntityType.create(world, SpawnReason.SPAWN_ITEM_USE);
+        AbstractBoat boat = this.boatEntityType.create(world, EntitySpawnReason.SPAWN_ITEM_USE);
 
         if (boat != null) {
-            Vec3d pos = hit.getPos();
-            boat.initPosition(pos.x, pos.y, pos.z);
+            Vec3 pos = hit.getLocation();
+            boat.setInitialPos(pos.x, pos.y, pos.z);
 
-            if (world instanceof ServerWorld server) {
-                EntityType.copier(server, stack, player).accept(boat);
+            if (world instanceof ServerLevel server) {
+                EntityType.createDefaultStackConfig(server, stack, player).accept(boat);
             }
         }
 

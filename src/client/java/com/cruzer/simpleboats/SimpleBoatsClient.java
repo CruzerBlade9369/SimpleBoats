@@ -13,10 +13,10 @@ import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.client.rendering.v1.EntityModelLayerRegistry;
-import net.minecraft.client.render.entity.EntityRendererFactories;
-import net.minecraft.entity.EntityType;
-import net.minecraft.entity.vehicle.AbstractBoatEntity;
-import net.minecraft.util.Identifier;
+import net.minecraft.client.renderer.entity.EntityRenderers;
+import net.minecraft.resources.Identifier;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.vehicle.boat.AbstractBoat;
 
 public class SimpleBoatsClient implements ClientModInitializer
 {
@@ -49,15 +49,15 @@ public class SimpleBoatsClient implements ClientModInitializer
             EntityType<SailboatEntity> sbEntityType =
                     SimpleBoatsEntities.SAILBOAT_TYPES.get(type);
 
-            Identifier baseTexture = Identifier.of(SimpleBoats.MOD_ID,
+            Identifier baseTexture = Identifier.fromNamespaceAndPath(SimpleBoats.MOD_ID,
                     TEXTURE_DIR + type.getName() + "_simpleboat.png");
 
-            EntityRendererFactories.register(
+            EntityRenderers.register(
                     mbEntityType,
                     ctx -> new MotorboatRenderer(ctx, baseTexture)
             );
 
-            EntityRendererFactories.register(
+            EntityRenderers.register(
                     sbEntityType,
                     ctx -> new SailboatRenderer(ctx, baseTexture)
             );
@@ -67,10 +67,10 @@ public class SimpleBoatsClient implements ClientModInitializer
         {
             if (client.player == null) return;
 
-            if (!(client.player.getVehicle() instanceof AbstractBoatEntity)) return;
+            if (!(client.player.getVehicle() instanceof AbstractBoat)) return;
 
-            boolean up = client.options.forwardKey.isPressed();
-            boolean down = client.options.backKey.isPressed();
+            boolean up = client.options.keyUp.isDown();
+            boolean down = client.options.keyDown.isDown();
 
             if (up == throttleLastUp && down == throttleLastDown) return;
 

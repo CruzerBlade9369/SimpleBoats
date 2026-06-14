@@ -1,10 +1,10 @@
 package com.cruzer.simpleboats.registry;
 
 import com.cruzer.simpleboats.SimpleBoats;
-import net.minecraft.registry.Registries;
-import net.minecraft.registry.Registry;
-import net.minecraft.sound.SoundEvent;
-import net.minecraft.util.Identifier;
+import net.minecraft.core.Registry;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.resources.Identifier;
+import net.minecraft.sounds.SoundEvent;
 
 public class SimpleBoatsSounds
 {
@@ -13,11 +13,11 @@ public class SimpleBoatsSounds
     public static final SoundEvent BOAT_SAIL = register("boat.sail.ambient");
 
     private static SoundEvent register(String id) {
-        Identifier identifier = Identifier.of(SimpleBoats.MOD_ID, id);
+        Identifier identifier = Identifier.fromNamespaceAndPath(SimpleBoats.MOD_ID, id);
         return Registry.register(
-                Registries.SOUND_EVENT,
+                BuiltInRegistries.SOUND_EVENT,
                 identifier,
-                SoundEvent.of(identifier)
+                SoundEvent.createVariableRangeEvent(identifier)
         );
     }
 

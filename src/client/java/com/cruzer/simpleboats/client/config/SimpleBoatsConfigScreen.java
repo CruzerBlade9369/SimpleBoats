@@ -6,8 +6,8 @@ import dev.isxander.yacl3.api.OptionDescription;
 import dev.isxander.yacl3.api.YetAnotherConfigLib;
 import dev.isxander.yacl3.api.controller.FloatSliderControllerBuilder;
 import dev.isxander.yacl3.api.controller.TickBoxControllerBuilder;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.text.Text;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.network.chat.Component;
 
 public class SimpleBoatsConfigScreen
 {
@@ -15,7 +15,7 @@ public class SimpleBoatsConfigScreen
     {
         return YetAnotherConfigLib.createBuilder()
 
-                .title(Text.literal("Simple Boats"))
+                .title(Component.literal("Simple Boats"))
 
                 .category(createAnimationCategory())
                 .category(createParticleCategory())
@@ -30,7 +30,7 @@ public class SimpleBoatsConfigScreen
     private static ConfigCategory createAnimationCategory()
     {
         return ConfigCategory.createBuilder()
-                .name(Text.literal("Boat Animations"))
+                .name(Component.literal("Boat Animations"))
                 .option(createMovementPitchOption())
                 .option(createTurnLeanOption())
                 .option(createSwayAmplitudeOption())
@@ -42,7 +42,7 @@ public class SimpleBoatsConfigScreen
     private static Option<Float> createMovementPitchOption()
     {
         return Option.<Float>createBuilder()
-                .name(Text.literal("Forward Movement Pitch Strength"))
+                .name(Component.literal("Forward Movement Pitch Strength"))
                 .binding(
                         1.0F,
 
@@ -56,7 +56,7 @@ public class SimpleBoatsConfigScreen
                                 .step(0.05F)
                 ).description(
                         OptionDescription.of(
-                                Text.literal("Affects how much the boat pitches up when moving forwards.")
+                                Component.literal("Affects how much the boat pitches up when moving forwards.")
                         )
                 )
                 .build();
@@ -65,7 +65,7 @@ public class SimpleBoatsConfigScreen
     private static Option<Float> createTurnLeanOption()
     {
         return Option.<Float>createBuilder()
-                .name(Text.literal("Turn Lean Strength"))
+                .name(Component.literal("Turn Lean Strength"))
                 .binding(
                         1.0F,
 
@@ -79,7 +79,7 @@ public class SimpleBoatsConfigScreen
                                 .step(0.05F)
                 ).description(
                         OptionDescription.of(
-                                Text.literal("Affects how much the boat leans when turning.")
+                                Component.literal("Affects how much the boat leans when turning.")
                         )
                 )
                 .build();
@@ -88,7 +88,7 @@ public class SimpleBoatsConfigScreen
     private static Option<Float> createSwayAmplitudeOption()
     {
         return Option.<Float>createBuilder()
-                .name(Text.literal("Ambient Sway Amplitude"))
+                .name(Component.literal("Ambient Sway Amplitude"))
                 .binding(
                         1.0F,
 
@@ -102,7 +102,7 @@ public class SimpleBoatsConfigScreen
                                 .step(0.05F)
                 ).description(
                         OptionDescription.of(
-                                Text.literal("Affects the amplitude of the boat's ambient sway.")
+                                Component.literal("Affects the amplitude of the boat's ambient sway.")
                         )
                 )
                 .build();
@@ -111,7 +111,7 @@ public class SimpleBoatsConfigScreen
     private static Option<Float> createSwaySpeedOption()
     {
         return Option.<Float>createBuilder()
-                .name(Text.literal("Ambient Sway Speed"))
+                .name(Component.literal("Ambient Sway Speed"))
                 .binding(
                         1.0F,
 
@@ -125,7 +125,7 @@ public class SimpleBoatsConfigScreen
                                 .step(0.05F)
                 ).description(
                         OptionDescription.of(
-                                Text.literal("Affects the speed of the boat's ambient sway.")
+                                Component.literal("Affects the speed of the boat's ambient sway.")
                         )
                 )
                 .build();
@@ -134,7 +134,7 @@ public class SimpleBoatsConfigScreen
     private static Option<Float> createRainSwayOption()
     {
         return Option.<Float>createBuilder()
-                .name(Text.literal("Rain Sway Multiplier"))
+                .name(Component.literal("Rain Sway Multiplier"))
                 .binding(
                         1.0F,
 
@@ -148,7 +148,7 @@ public class SimpleBoatsConfigScreen
                                 .step(0.05F)
                 ).description(
                         OptionDescription.of(
-                                Text.literal("Affects the multiplier for rain-induced sway.")
+                                Component.literal("Affects the multiplier for rain-induced sway.")
                         )
                 )
                 .build();
@@ -157,7 +157,7 @@ public class SimpleBoatsConfigScreen
     private static ConfigCategory createParticleCategory()
     {
         return ConfigCategory.createBuilder()
-                .name(Text.literal("Boat Particles"))
+                .name(Component.literal("Boat Particles"))
                 .option(createBubbleOption())
                 .build();
     }
@@ -166,7 +166,7 @@ public class SimpleBoatsConfigScreen
     {
         return Option.<Boolean>createBuilder()
 
-                .name(Text.literal("Motorboat Propeller Bubbles"))
+                .name(Component.literal("Motorboat Propeller Bubbles"))
                 .binding(
                         true,
 
@@ -177,7 +177,7 @@ public class SimpleBoatsConfigScreen
                 .controller(TickBoxControllerBuilder::create)
                 .description(
                         OptionDescription.of(
-                                Text.literal("Determines whether motorboat propeller bubbles are displayed.")
+                                Component.literal("Determines whether motorboat propeller bubbles are displayed.")
                         )
                 )
                 .build();

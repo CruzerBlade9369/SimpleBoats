@@ -4,13 +4,13 @@ import com.cruzer.simpleboats.entity.vehicle.SailboatEntity;
 import com.cruzer.simpleboats.registry.SimpleBoatsSounds;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.Mth;
+import net.minecraft.world.phys.Vec3;
 
 @Environment(EnvType.CLIENT)
 public class SailboatWindSoundInstance extends AbstractPoweredBoatSoundInstance
 {
-    private Vec3d lastPos;
+    private Vec3 lastPos;
     private float speedEstimate;
 
     public SailboatWindSoundInstance(SailboatEntity boat)
@@ -36,12 +36,12 @@ public class SailboatWindSoundInstance extends AbstractPoweredBoatSoundInstance
         speedEstimate = Math.clamp(Math.max(speedEstimate, rawSpeed), 0f, 0.5f);
 
         this.pitch = 1f;
-        this.volume = MathHelper.lerp(speedEstimate / 0.4f, 0f, 0.3f);
+        this.volume = Mth.lerp(speedEstimate / 0.4f, 0f, 0.3f);
     }
 
     private float calculateDisplacementVelocity()
     {
-        Vec3d pos = boat.getEntityPos();
+        Vec3 pos = boat.position();
 
         if (lastPos == null)
         {
@@ -49,10 +49,10 @@ public class SailboatWindSoundInstance extends AbstractPoweredBoatSoundInstance
             return 0f;
         }
 
-        Vec3d delta = pos.subtract(lastPos);
+        Vec3 delta = pos.subtract(lastPos);
         lastPos = pos;
 
-        float yawRad = boat.getYaw() * ((float)Math.PI / 180F);
+        float yawRad = boat.getYRot() * ((float)Math.PI / 180F);
 
         double fwdX = -Math.sin(yawRad);
         double fwdZ = Math.cos(yawRad);
