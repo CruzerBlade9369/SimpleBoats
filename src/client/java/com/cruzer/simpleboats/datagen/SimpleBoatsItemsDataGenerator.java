@@ -3,10 +3,10 @@ package com.cruzer.simpleboats.datagen;
 import com.cruzer.simpleboats.registry.SimpleBoatsItems;
 import net.fabricmc.fabric.api.client.datagen.v1.provider.FabricModelProvider;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
-import net.minecraft.client.data.BlockStateModelGenerator;
-import net.minecraft.client.data.ItemModelGenerator;
-import net.minecraft.client.data.Models;
-import net.minecraft.item.Item;
+import net.minecraft.client.data.models.BlockModelGenerators;
+import net.minecraft.client.data.models.ItemModelGenerators;
+import net.minecraft.client.data.models.model.ModelTemplates;
+import net.minecraft.world.item.Item;
 
 public class SimpleBoatsItemsDataGenerator extends FabricModelProvider
 {
@@ -16,24 +16,24 @@ public class SimpleBoatsItemsDataGenerator extends FabricModelProvider
     }
 
     @Override
-    public void generateBlockStateModels(BlockStateModelGenerator blockStateModelGenerator)
+    public void generateBlockStateModels(BlockModelGenerators blockStateModelGenerator)
     {
 
     }
 
     @Override
-    public void generateItemModels(ItemModelGenerator itemModelGenerator)
+    public void generateItemModels(ItemModelGenerators itemModelGenerator)
     {
-        itemModelGenerator.register(SimpleBoatsItems.OUTBOARD_MOTOR, Models.GENERATED);
-        itemModelGenerator.register(SimpleBoatsItems.BOAT_SAIL, Models.GENERATED);
-        itemModelGenerator.register(SimpleBoatsItems.BOAT_PROPELLER, Models.GENERATED);
+        itemModelGenerator.generateFlatItem(SimpleBoatsItems.OUTBOARD_MOTOR, ModelTemplates.FLAT_ITEM);
+        itemModelGenerator.generateFlatItem(SimpleBoatsItems.BOAT_SAIL, ModelTemplates.FLAT_ITEM);
+        itemModelGenerator.generateFlatItem(SimpleBoatsItems.BOAT_PROPELLER, ModelTemplates.FLAT_ITEM);
 
         for (Item boat : SimpleBoatsItems.MOTORBOAT_ITEMS.values()) {
-            itemModelGenerator.register(boat, Models.GENERATED);
+            itemModelGenerator.generateFlatItem(boat, ModelTemplates.FLAT_ITEM);
         }
 
         for (Item boat : SimpleBoatsItems.SAILBOAT_ITEMS.values()) {
-            itemModelGenerator.register(boat, Models.GENERATED);
+            itemModelGenerator.generateFlatItem(boat, ModelTemplates.FLAT_ITEM);
         }
     }
 }

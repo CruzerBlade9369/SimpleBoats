@@ -3,14 +3,14 @@ package com.cruzer.simpleboats.client.sound;
 import com.cruzer.simpleboats.entity.vehicle.AbstractPoweredBoatEntity;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.minecraft.client.sound.MovingSoundInstance;
-import net.minecraft.client.sound.SoundInstance;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.sound.SoundCategory;
-import net.minecraft.sound.SoundEvent;
+import net.minecraft.client.resources.sounds.AbstractTickableSoundInstance;
+import net.minecraft.client.resources.sounds.SoundInstance;
+import net.minecraft.sounds.SoundEvent;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.world.entity.player.Player;
 
 @Environment(EnvType.CLIENT)
-public class AbstractPoweredBoatSoundInstance extends MovingSoundInstance
+public class AbstractPoweredBoatSoundInstance extends AbstractTickableSoundInstance
 {
     protected final AbstractPoweredBoatEntity boat;
     protected boolean hasDriver;
@@ -19,15 +19,15 @@ public class AbstractPoweredBoatSoundInstance extends MovingSoundInstance
     {
         super(
                 sound,
-                SoundCategory.NEUTRAL,
-                SoundInstance.createRandom()
+                SoundSource.NEUTRAL,
+                SoundInstance.createUnseededRandom()
         );
 
         this.boat = boat;
 
-        this.attenuationType = AttenuationType.LINEAR;
-        this.repeat = true;
-        this.repeatDelay = 0;
+        this.attenuation = Attenuation.LINEAR.LINEAR;
+        this.looping = true;
+        this.delay = 0;
         this.volume = 0.0F;
 
         this.x = (float) boat.getX();
@@ -36,12 +36,12 @@ public class AbstractPoweredBoatSoundInstance extends MovingSoundInstance
     }
 
     @Override
-    public boolean canPlay() {
+    public boolean canPlaySound() {
         return !boat.isSilent();
     }
 
     @Override
-    public boolean shouldAlwaysPlay() {
+    public boolean canStartSilent() {
         return true;
     }
 
@@ -50,11 +50,11 @@ public class AbstractPoweredBoatSoundInstance extends MovingSoundInstance
     {
         if (boat.isRemoved())
         {
-            this.setDone();
+            this.stop();
             return;
         }
 
-        hasDriver = boat.getControllingPassenger() instanceof PlayerEntity;
+        hasDriver = boat.getControllingPassenger() instanceof Player;
 
         this.x = (float) boat.getX();
         this.y = (float) boat.getY();

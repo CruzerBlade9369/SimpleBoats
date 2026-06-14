@@ -1,6 +1,6 @@
 package com.cruzer.simpleboats.client.renderer.state;
 
-import net.minecraft.util.Identifier;
+import net.minecraft.resources.Identifier;
 
 public class MotorboatRenderState extends PoweredBoatRenderState
 {

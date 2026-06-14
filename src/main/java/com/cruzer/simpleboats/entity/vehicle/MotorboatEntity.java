@@ -3,16 +3,14 @@ package com.cruzer.simpleboats.entity.vehicle;
 import com.cruzer.simpleboats.registry.SimpleBoatsSounds;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityType;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.vehicle.BoatEntity;
-import net.minecraft.item.Item;
-import net.minecraft.particle.ParticleTypes;
-import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.Vec3d;
-import net.minecraft.world.World;
-
+import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.util.Mth;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.Vec3;
 import java.util.List;
 import java.util.function.Supplier;
 
@@ -31,7 +29,7 @@ public class MotorboatEntity extends AbstractPoweredBoatEntity
     private static final float MAX_TURN = 0.3f;
     private static final int MAX_PAX = 5;
 
-    public MotorboatEntity(EntityType<? extends MotorboatEntity> entityType, World world, Supplier<Item> supplier) {
+    public MotorboatEntity(EntityType<? extends MotorboatEntity> entityType, Level world, Supplier<Item> supplier) {
         super(entityType, world, supplier);
     }
 
@@ -66,33 +64,33 @@ public class MotorboatEntity extends AbstractPoweredBoatEntity
         float turnStrength = (1 - (1 - throttle) * (1 - throttle)) * MAX_TURN;
 
         if (leftInput)
-            this.yawVelocity -= turnStrength;
+            this.deltaRotation -= turnStrength;
         if (rightInput)
-            this.yawVelocity += turnStrength;
+            this.deltaRotation += turnStrength;
     }
 
     @Environment(EnvType.CLIENT)
     @Override
     protected void clientVisualTick(float powerLevel) {
         calculatePropellerRotation(powerLevel);
-        if (this.isTouchingWater() && powerLevel > 0.05f)
+        if (this.isInWater() && powerLevel > 0.05f)
             spawnPropellerBubbles();
     }
 
     @Override
     protected void addPassenger(Entity passenger)
     {
-        boolean hasDriver = this.getControllingPassenger() instanceof PlayerEntity;
+        boolean hasDriver = this.getControllingPassenger() instanceof Player;
         if (!hasDriver
-                && passenger instanceof PlayerEntity
+                && passenger instanceof Player
                 && !this.isSilent()
-                && !this.getEntityWorld().isClient() && this.age > 0)
+                && !this.level().isClientSide() && this.tickCount > 0)
         {
-            this.getEntityWorld().playSound(
+            this.level().playSound(
                     null,
                     getX(), getY(), getZ(),
                     SimpleBoatsSounds.BOAT_MOTOR_START,
-                    getSoundCategory(),
+                    getSoundSource(),
                     0.8f,
                     1.0f
             );
@@ -117,28 +115,28 @@ public class MotorboatEntity extends AbstractPoweredBoatEntity
 
     @Environment(EnvType.CLIENT)
     private void spawnPropellerBubbles() {
-        World world = this.getEntityWorld();
-        Vec3d pos = getPropellerWorldPos();
+        Level world = this.level();
+        Vec3 pos = getPropellerWorldPos();
         float throttle = getPowerLevel();
-        int count = MathHelper.clamp((int) (throttle * 4), 1, 4);
+        int count = Mth.clamp((int) (throttle * 4), 1, 4);
 
-        Vec3d vel = this.getVelocity();
-        double speedSq = this.getVelocity().horizontalLengthSquared();
+        Vec3 vel = this.getDeltaMovement();
+        double speedSq = this.getDeltaMovement().horizontalDistanceSqr();
 
         double maxSpeed = 0.6;
         double maxSpeedSq = maxSpeed * maxSpeed;
 
-        double speedFactor = 1.0 - MathHelper.clamp(
+        double speedFactor = 1.0 - Mth.clamp(
                 speedSq / maxSpeedSq,
                 0.0,
                 1.0
         );
 
         float yawRad = getYawRad();
-        Vec3d propWashDir = new Vec3d(
-                -MathHelper.sin(yawRad),
+        Vec3 propWashDir = new Vec3(
+                -Mth.sin(yawRad),
                 0.0,
-                MathHelper.cos(yawRad)
+                Mth.cos(yawRad)
         ).normalize();
 
         // fine tune here for visual exaggeration
@@ -146,9 +144,9 @@ public class MotorboatEntity extends AbstractPoweredBoatEntity
 
         for (int i = 0; i < count; i++)
         {
-            Vec3d particleV = vel.add(propWashDir.multiply(-washStrength * throttle * speedFactor));
+            Vec3 particleV = vel.add(propWashDir.scale(-washStrength * throttle * speedFactor));
 
-            world.addParticleClient(
+            world.addParticle(
                     ParticleTypes.BUBBLE,
                     pos.x + (this.random.nextDouble() - 0.5) * 0.2,
                     pos.y,
@@ -159,7 +157,7 @@ public class MotorboatEntity extends AbstractPoweredBoatEntity
     }
 
     @Environment(EnvType.CLIENT)
-    private Vec3d getPropellerWorldPos() {
+    private Vec3 getPropellerWorldPos() {
         float axisBackOffset = -2.9f;
         float spawnBackOffset = -3.45f;
         float verticalOffset = -1.25f;
@@ -167,19 +165,19 @@ public class MotorboatEntity extends AbstractPoweredBoatEntity
         float boatYawRad  = this.getYawRad();
         float tillerYawRad = getPropDirYaw();
 
-        double pivotX = this.getX() - MathHelper.sin(boatYawRad) * axisBackOffset;
-        double pivotZ = this.getZ() + MathHelper.cos(boatYawRad) * axisBackOffset;
+        double pivotX = this.getX() - Mth.sin(boatYawRad) * axisBackOffset;
+        double pivotZ = this.getZ() + Mth.cos(boatYawRad) * axisBackOffset;
         double pivotY = this.getY() + verticalOffset;
 
         float localBack = spawnBackOffset - axisBackOffset;
 
-        double localX = -MathHelper.sin(tillerYawRad) * localBack;
-        double localZ =  MathHelper.cos(tillerYawRad) * localBack;
+        double localX = -Mth.sin(tillerYawRad) * localBack;
+        double localZ =  Mth.cos(tillerYawRad) * localBack;
 
-        double worldX = localX * MathHelper.cos(boatYawRad) - localZ * MathHelper.sin(boatYawRad);
-        double worldZ = localX * MathHelper.sin(boatYawRad) + localZ * MathHelper.cos(boatYawRad);
+        double worldX = localX * Mth.cos(boatYawRad) - localZ * Mth.sin(boatYawRad);
+        double worldZ = localX * Mth.sin(boatYawRad) + localZ * Mth.cos(boatYawRad);
 
-        return new Vec3d(pivotX + worldX, pivotY, pivotZ + worldZ);
+        return new Vec3(pivotX + worldX, pivotY, pivotZ + worldZ);
     }
 
     @Environment(EnvType.CLIENT)

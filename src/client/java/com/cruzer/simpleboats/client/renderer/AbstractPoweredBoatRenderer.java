@@ -3,22 +3,21 @@ package com.cruzer.simpleboats.client.renderer;
 import com.cruzer.simpleboats.client.config.SimpleBoatsConfigManagerClient;
 import com.cruzer.simpleboats.client.renderer.state.PoweredBoatRenderState;
 import com.cruzer.simpleboats.entity.vehicle.AbstractPoweredBoatEntity;
+import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.math.Axis;
+import net.minecraft.client.model.EntityModel;
 import net.minecraft.client.model.Model;
-import net.minecraft.client.render.OverlayTexture;
-import net.minecraft.client.render.RenderLayers;
-import net.minecraft.client.render.command.OrderedRenderCommandQueue;
-import net.minecraft.client.render.entity.EntityRenderer;
-import net.minecraft.client.render.entity.EntityRendererFactory;
-import net.minecraft.client.render.entity.model.EntityModel;
-import net.minecraft.client.render.entity.model.EntityModelLayer;
-import net.minecraft.client.render.state.CameraRenderState;
-import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.entity.vehicle.AbstractBoatEntity;
-import net.minecraft.util.Identifier;
+import net.minecraft.client.model.geom.ModelLayerLocation;
+import net.minecraft.client.renderer.SubmitNodeCollector;
+import net.minecraft.client.renderer.entity.EntityRenderer;
+import net.minecraft.client.renderer.entity.EntityRendererProvider;
+import net.minecraft.client.renderer.rendertype.RenderTypes;
+import net.minecraft.client.renderer.state.CameraRenderState;
+import net.minecraft.client.renderer.texture.OverlayTexture;
+import net.minecraft.resources.Identifier;
+import net.minecraft.util.Mth;
 import net.minecraft.util.Unit;
-import net.minecraft.util.math.Box;
-import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.RotationAxis;
+import net.minecraft.world.phys.AABB;
 import org.joml.Quaternionf;
 
 public abstract class AbstractPoweredBoatRenderer<
@@ -27,38 +26,38 @@ public abstract class AbstractPoweredBoatRenderer<
         > extends EntityRenderer<E, S>
 {
     protected final EntityModel<S> model;
-    protected final Model.SinglePartModel waterMaskModel;
+    protected final Model.Simple waterMaskModel;
     protected final Identifier texture;
 
     protected AbstractPoweredBoatRenderer(
-                EntityRendererFactory.Context ctx,
-                EntityModelLayer baseLayer,
+                EntityRendererProvider.Context ctx,
+                ModelLayerLocation baseLayer,
                 Identifier texture
     )
     {
         super(ctx);
         this.model = createBaseModel(ctx, baseLayer);
         this.texture = texture;
-        this.waterMaskModel = new Model.SinglePartModel(
-                ctx.getPart(getWaterMaskLayer()),
-                id -> RenderLayers.waterMask()
+        this.waterMaskModel = new Model.Simple(
+                ctx.bakeLayer(getWaterMaskLayer()),
+                id -> RenderTypes.waterMask()
         );
     }
 
     @Override
-    protected Box getBoundingBox(E entity)
+    protected AABB getBoundingBoxForCulling(E entity)
     {
-        return entity.getBoundingBox().expand(
+        return entity.getBoundingBox().expandTowards(
                 3.0, 5.0, 3.0
         );
     }
 
     protected abstract EntityModel<S> createBaseModel(
-            EntityRendererFactory.Context ctx,
-            EntityModelLayer layer
+            EntityRendererProvider.Context ctx,
+            ModelLayerLocation layer
     );
 
-    protected abstract EntityModelLayer getWaterMaskLayer();
+    protected abstract ModelLayerLocation getWaterMaskLayer();
 
     protected void updateSubclassState(E entity, S state, float tick)
     {
@@ -67,8 +66,8 @@ public abstract class AbstractPoweredBoatRenderer<
 
     protected void renderAttachments(
             S state,
-            MatrixStack matrices,
-            OrderedRenderCommandQueue queue
+            PoseStack matrices,
+            SubmitNodeCollector queue
     )
     {
         // For subclasses to override
@@ -76,39 +75,39 @@ public abstract class AbstractPoweredBoatRenderer<
 
     protected void applyBoatTransform(
             PoweredBoatRenderState state,
-            MatrixStack matrices
+            PoseStack matrices
     )
     {
         // position/rotation similar to vanilla boats
         matrices.translate(0.0F, 0.375F, 0.0F);
-        matrices.multiply(RotationAxis.POSITIVE_Y.rotationDegrees(180.0F - state.yaw));
+        matrices.mulPose(Axis.YP.rotationDegrees(180.0F - state.yRot));
 
         // damage wobble / bubble wobble
-        float f = state.damageWobbleTicks;
+        float f = state.hurtTime;
         if (f > 0.0F) {
-            matrices.multiply(RotationAxis.POSITIVE_X.rotationDegrees(
-                    MathHelper.sin(f) * f * state.damageWobbleStrength / 10.0F * state.damageWobbleSide
+            matrices.mulPose(Axis.XP.rotationDegrees(
+                    Mth.sin(f) * f * state.damageTime / 10.0F * state.hurtDir
             ));
         }
 
-        if (!state.submergedInWater && !MathHelper.approximatelyEquals(state.bubbleWobble, 0.0F)) {
-            matrices.multiply(new Quaternionf().setAngleAxis(state.bubbleWobble * (float) (Math.PI / 180.0), 1.0F, 0.0F, 1.0F));
+        if (!state.isUnderWater && !Mth.equal(state.bubbleAngle, 0.0F)) {
+            matrices.mulPose(new Quaternionf().setAngleAxis(state.bubbleAngle * (float) (Math.PI / 180.0), 1.0F, 0.0F, 1.0F));
         }
 
         // ambient sway
-        matrices.multiply(
-                RotationAxis.POSITIVE_Z.rotationDegrees(state.swayRoll)
+        matrices.mulPose(
+                Axis.ZP.rotationDegrees(state.swayRoll)
         );
-        matrices.multiply(
-                RotationAxis.POSITIVE_X.rotationDegrees(state.swayPitch)
+        matrices.mulPose(
+                Axis.XP.rotationDegrees(state.swayPitch)
         );
         // speed pitch
-        matrices.multiply(
-                RotationAxis.POSITIVE_X.rotationDegrees(state.speedPitch)
+        matrices.mulPose(
+                Axis.XP.rotationDegrees(state.speedPitch)
         );
         // turn lean
-        matrices.multiply(
-                RotationAxis.POSITIVE_Z.rotationDegrees(state.turnRoll)
+        matrices.mulPose(
+                Axis.ZP.rotationDegrees(state.turnRoll)
         );
 
         // flip / rotate to match model orientation
@@ -117,7 +116,7 @@ public abstract class AbstractPoweredBoatRenderer<
 
     protected void updateBoatSway(E entity, S state, float tick)
     {
-        if (!entity.isTouchingWater()) return;
+        if (!entity.isInWater()) return;
 
         applyAmbientSway(entity, state, tick);
         applySpeedPitch(entity, state);
@@ -126,10 +125,10 @@ public abstract class AbstractPoweredBoatRenderer<
 
     private void applyAmbientSway(E entity, S state, float tick)
     {
-        float phaseOffset = (entity.getUuid().hashCode() & 0xFFFF) * 0.01F;
-        float time = entity.age + tick + phaseOffset;
+        float phaseOffset = (entity.getUUID().hashCode() & 0xFFFF) * 0.01F;
+        float time = entity.tickCount + tick + phaseOffset;
 
-        boolean isRaining = entity.getEntityWorld().isRaining();
+        boolean isRaining = entity.level().isRaining();
         float rainAmplitudeMultiplier = isRaining ? 2.2F * SimpleBoatsConfigManagerClient.CONFIG.rainSwayMultiplier : 1.0F;
         float rainSpeedMultiplier = isRaining ? 2.2F : 1.0F;
 
@@ -140,10 +139,10 @@ public abstract class AbstractPoweredBoatRenderer<
         float swaySpeed = baseSwaySpeed * rainSpeedMultiplier  * 0.85f;
 
         state.swayRoll =
-                MathHelper.sin(time * swaySpeed) * swayAmp;
+                Mth.sin(time * swaySpeed) * swayAmp;
 
         state.swayPitch =
-                MathHelper.cos(time * swaySpeed * 0.8F) * swayAmp * 0.6F;
+                Mth.cos(time * swaySpeed * 0.8F) * swayAmp * 0.6F;
     }
 
     private void applySpeedPitch(E entity, S state)
@@ -152,10 +151,10 @@ public abstract class AbstractPoweredBoatRenderer<
         float pitchMultiplier = SimpleBoatsConfigManagerClient.CONFIG.pitchMultiplier;
 
         float fwdSpd = entity.getForwardSpeed();
-        float speedClamped = MathHelper.clamp(fwdSpd, 0.0F, 1.0F);
+        float speedClamped = Mth.clamp(fwdSpd, 0.0F, 1.0F);
 
         state.speedPitch = pitchMultiplier *
-                MathHelper.lerp(
+                Mth.lerp(
                 1F,
                 state.speedPitch,
                 speedClamped * maxSpeedPitch
@@ -170,18 +169,18 @@ public abstract class AbstractPoweredBoatRenderer<
     }
 
     @Override
-    public void updateRenderState(E entity, S state, float tick)
+    public void extractRenderState(E entity, S state, float tick)
     {
-        super.updateRenderState(entity, state, tick);
+        super.extractRenderState(entity, state, tick);
 
-        state.yaw = entity.getLerpedYaw(tick);
-        state.pitch = MathHelper.lerp(tick, entity.lastPitch, entity.getPitch());
+        state.yRot = entity.getYRot(tick);
+        state.pitch = Mth.lerp(tick, entity.xRotO, entity.getViewXRot(tick));
 
-        state.damageWobbleTicks = entity.getDamageWobbleTicks() - tick;
-        state.damageWobbleSide = entity.getDamageWobbleSide();
-        state.damageWobbleStrength = Math.max(entity.getDamageWobbleStrength() - tick, 0.0F);
-        state.bubbleWobble = entity.lerpBubbleWobble(tick);
-        state.submergedInWater = entity.isSubmergedInWater();
+        state.hurtTime = entity.getHurtTime() - tick;
+        state.hurtDir = entity.getHurtDir();
+        state.damageTime = Math.max(entity.getDamage() - tick, 0.0F);
+        state.bubbleAngle = entity.getBubbleAngle(tick);
+        state.isUnderWater = entity.isUnderWater();
 
         state.texture = this.texture;
 
@@ -190,46 +189,46 @@ public abstract class AbstractPoweredBoatRenderer<
     }
 
     @Override
-    public void render(
+    public void submit(
             S state,
-            MatrixStack matrices,
-            OrderedRenderCommandQueue queue,
+            PoseStack matrices,
+            SubmitNodeCollector queue,
             CameraRenderState camera
     )
     {
-        matrices.push();
+        matrices.pushPose();
 
         applyBoatTransform(state, matrices);
 
-        model.setAngles(state);
+        model.setupAnim(state);
 
         queue.submitModel(
                 this.model,
                 state,
                 matrices,
-                RenderLayers.entityTranslucent(state.texture),
-                state.light,
-                OverlayTexture.DEFAULT_UV,
+                RenderTypes.entityTranslucent(state.texture),
+                state.lightCoords,
+                OverlayTexture.NO_OVERLAY,
                 state.outlineColor,
                 null
         );
 
         renderAttachments(state, matrices, queue);
 
-        if (!state.submergedInWater) {
+        if (!state.isUnderWater) {
             queue.submitModel(
                     this.waterMaskModel,
                     Unit.INSTANCE,
                     matrices,
-                    RenderLayers.waterMask(),
-                    state.light,
-                    OverlayTexture.DEFAULT_UV,
+                    RenderTypes.waterMask(),
+                    state.lightCoords,
+                    OverlayTexture.NO_OVERLAY,
                     state.outlineColor,
                     null
             );
         }
 
-        matrices.pop();
-        super.render(state, matrices, queue, camera);
+        matrices.popPose();
+        super.submit(state, matrices, queue, camera);
     }
 }

@@ -1,27 +1,27 @@
 package com.cruzer.simpleboats.network;
 
 import com.cruzer.simpleboats.SimpleBoats;
-import net.minecraft.network.RegistryByteBuf;
-import net.minecraft.network.codec.PacketCodec;
-import net.minecraft.network.codec.PacketCodecs;
-import net.minecraft.network.packet.CustomPayload;
-import net.minecraft.util.Identifier;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.ByteBufCodecs;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import net.minecraft.resources.Identifier;
 
 public record SimpleBoatsControlPacket(
         boolean throttleUp,
         boolean throttleDown
-) implements CustomPayload
+) implements CustomPacketPayload
 {
-    public static final CustomPayload.Id<SimpleBoatsControlPacket> ID = new CustomPayload.Id<>(Identifier.of(SimpleBoats.MOD_ID, "boats_control"));
-    public static final PacketCodec<RegistryByteBuf, SimpleBoatsControlPacket> CODEC =
-            PacketCodec.tuple(
-                    PacketCodecs.BOOLEAN, SimpleBoatsControlPacket::throttleUp,
-                    PacketCodecs.BOOLEAN, SimpleBoatsControlPacket::throttleDown,
+    public static final CustomPacketPayload.Type<SimpleBoatsControlPacket> ID = new CustomPacketPayload.Type<>(Identifier.fromNamespaceAndPath(SimpleBoats.MOD_ID, "boats_control"));
+    public static final StreamCodec<RegistryFriendlyByteBuf, SimpleBoatsControlPacket> CODEC =
+            StreamCodec.composite(
+                    ByteBufCodecs.BOOL, SimpleBoatsControlPacket::throttleUp,
+                    ByteBufCodecs.BOOL, SimpleBoatsControlPacket::throttleDown,
                     SimpleBoatsControlPacket::new
             );
 
     @Override
-    public Id<? extends CustomPayload> getId()
+    public Type<? extends CustomPacketPayload> type()
     {
         return ID;
     }

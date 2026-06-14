@@ -41,4 +41,8 @@ replay_*.log
 *.jfr
 
 # generated
-src/main/generated
+src/main/generated/
+
+# remaps
+remappedSrc/
+remappedClientSrc/

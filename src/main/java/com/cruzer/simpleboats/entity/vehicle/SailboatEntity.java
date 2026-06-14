@@ -2,13 +2,10 @@ package com.cruzer.simpleboats.entity.vehicle;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.minecraft.entity.EntityType;
-import net.minecraft.entity.vehicle.BoatEntity;
-import net.minecraft.item.Item;
-import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.Vec3d;
-import net.minecraft.world.World;
-
+import net.minecraft.util.Mth;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.level.Level;
 import java.util.function.Supplier;
 
 public class SailboatEntity extends AbstractPoweredBoatEntity
@@ -23,7 +20,7 @@ public class SailboatEntity extends AbstractPoweredBoatEntity
     @Environment(EnvType.CLIENT)
     private float tillerYaw = 0f;
 
-    public SailboatEntity(EntityType<? extends SailboatEntity> entityType, World world, Supplier<Item> supplier) {
+    public SailboatEntity(EntityType<? extends SailboatEntity> entityType, Level world, Supplier<Item> supplier) {
         super(entityType, world, supplier);
     }
 
@@ -56,7 +53,7 @@ public class SailboatEntity extends AbstractPoweredBoatEntity
     {
         float forwardSpeed = Math.max(0.0f, getForwardSpeed());
 
-        float t = MathHelper.clamp(
+        float t = Mth.clamp(
                 forwardSpeed / RUDDER_FULL_EFFECT_SPD,
                 0f,
                 1f
@@ -67,10 +64,10 @@ public class SailboatEntity extends AbstractPoweredBoatEntity
         float turnStrength = MIN_TURN + t * (MAX_TURN - MIN_TURN);
 
         if (leftInput) {
-            this.yawVelocity -= turnStrength;
+            this.deltaRotation -= turnStrength;
         }
         if (rightInput) {
-            this.yawVelocity += turnStrength;
+            this.deltaRotation += turnStrength;
         }
     }
 

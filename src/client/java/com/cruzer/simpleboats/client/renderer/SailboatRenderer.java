@@ -6,25 +6,25 @@ import com.cruzer.simpleboats.client.model.SimpleBoatsModelLayers;
 import com.cruzer.simpleboats.client.model.TillerModel;
 import com.cruzer.simpleboats.client.renderer.state.SailboatRenderState;
 import com.cruzer.simpleboats.entity.vehicle.SailboatEntity;
-import net.minecraft.client.render.OverlayTexture;
-import net.minecraft.client.render.RenderLayers;
-import net.minecraft.client.render.command.OrderedRenderCommandQueue;
-import net.minecraft.client.render.entity.EntityRendererFactory;
-import net.minecraft.client.render.entity.model.EntityModel;
-import net.minecraft.client.render.entity.model.EntityModelLayer;
-import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.util.Identifier;
+import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.client.model.EntityModel;
+import net.minecraft.client.model.geom.ModelLayerLocation;
+import net.minecraft.client.renderer.SubmitNodeCollector;
+import net.minecraft.client.renderer.entity.EntityRendererProvider;
+import net.minecraft.client.renderer.rendertype.RenderTypes;
+import net.minecraft.client.renderer.texture.OverlayTexture;
+import net.minecraft.resources.Identifier;
 
 public class SailboatRenderer extends AbstractPoweredBoatRenderer<SailboatEntity, SailboatRenderState>
 {
     private final TillerModel tiller;
     private final SailModel sailModel;
 
-    public SailboatRenderer(EntityRendererFactory.Context ctx, Identifier texture)
+    public SailboatRenderer(EntityRendererProvider.Context ctx, Identifier texture)
     {
         super(ctx, SimpleBoatsModelLayers.BOAT_HULL, texture);
-        this.tiller = new TillerModel(ctx.getPart(SimpleBoatsModelLayers.SAILBOAT_TILLER));
-        this.sailModel = new SailModel(ctx.getPart(SimpleBoatsModelLayers.SAILBOAT_SAIL_BASE));
+        this.tiller = new TillerModel(ctx.bakeLayer(SimpleBoatsModelLayers.SAILBOAT_TILLER));
+        this.sailModel = new SailModel(ctx.bakeLayer(SimpleBoatsModelLayers.SAILBOAT_SAIL_BASE));
     }
 
     @Override
@@ -34,18 +34,18 @@ public class SailboatRenderer extends AbstractPoweredBoatRenderer<SailboatEntity
     }
 
     @Override
-    protected EntityModelLayer getWaterMaskLayer()
+    protected ModelLayerLocation getWaterMaskLayer()
     {
         return SimpleBoatsModelLayers.BOAT_WATER_MASK;
     }
 
     @Override
     protected EntityModel<SailboatRenderState> createBaseModel(
-            EntityRendererFactory.Context ctx,
-            EntityModelLayer layer
+            EntityRendererProvider.Context ctx,
+            ModelLayerLocation layer
     )
     {
-        return new GenericBoatModel<>(ctx.getPart(layer));
+        return new GenericBoatModel<>(ctx.bakeLayer(layer));
     }
 
     @Override
@@ -63,17 +63,17 @@ public class SailboatRenderer extends AbstractPoweredBoatRenderer<SailboatEntity
     @Override
     protected void renderAttachments(
             SailboatRenderState state,
-            MatrixStack matrices,
-            OrderedRenderCommandQueue queue
+            PoseStack matrices,
+            SubmitNodeCollector queue
     )
     {
         queue.submitModel(
                 tiller,
                 state,
                 matrices,
-                RenderLayers.entityTranslucent(state.texture),
-                state.light,
-                OverlayTexture.DEFAULT_UV,
+                RenderTypes.entityTranslucent(state.texture),
+                state.lightCoords,
+                OverlayTexture.NO_OVERLAY,
                 state.outlineColor,
                 null
         );
@@ -82,9 +82,9 @@ public class SailboatRenderer extends AbstractPoweredBoatRenderer<SailboatEntity
                 sailModel,
                 state,
                 matrices,
-                RenderLayers.entityTranslucent(state.texture),
-                state.light,
-                OverlayTexture.DEFAULT_UV,
+                RenderTypes.entityTranslucent(state.texture),
+                state.lightCoords,
+                OverlayTexture.NO_OVERLAY,
                 state.outlineColor,
                 null
         );
