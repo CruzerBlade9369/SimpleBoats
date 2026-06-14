@@ -13,7 +13,7 @@ public class SimpleBoatsNetworking {
             Identifier.fromNamespaceAndPath(SimpleBoats.MOD_ID, "boat_power_level");
 
     public static void register() {
-        PayloadTypeRegistry.playC2S().register(
+        PayloadTypeRegistry.serverboundPlay().register(
                 SimpleBoatsControlPacket.ID,
                 SimpleBoatsControlPacket.CODEC
         );

@@ -2,7 +2,7 @@ package com.cruzer.simpleboats.datagen;
 
 import com.cruzer.simpleboats.registry.SimpleBoatsTypes;
 import com.cruzer.simpleboats.registry.SimpleBoatsItems;
-import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
+import net.fabricmc.fabric.api.datagen.v1.FabricPackOutput;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricRecipeProvider;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.recipes.RecipeCategory;
@@ -16,7 +16,7 @@ import java.util.concurrent.CompletableFuture;
 
 public class SimpleBoatsRecipeGenerator extends FabricRecipeProvider
 {
-    SimpleBoatsRecipeGenerator(FabricDataOutput gen, CompletableFuture<HolderLookup.Provider> registriesFuture)
+    SimpleBoatsRecipeGenerator(FabricPackOutput gen, CompletableFuture<HolderLookup.Provider> registriesFuture)
     {
         super(gen, registriesFuture);
     }

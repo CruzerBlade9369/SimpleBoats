@@ -3,7 +3,7 @@ package com.cruzer.simpleboats.registry;
 import com.cruzer.simpleboats.SimpleBoats;
 import com.cruzer.simpleboats.item.MotorboatItem;
 import com.cruzer.simpleboats.item.SailboatItem;
-import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
+import net.fabricmc.fabric.api.creativetab.v1.CreativeModeTabEvents;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
@@ -74,7 +74,7 @@ public class SimpleBoatsItems
 
     private static void addToItemGroup(Item item, ResourceKey<CreativeModeTab> group)
     {
-        ItemGroupEvents.modifyEntriesEvent(group)
+        CreativeModeTabEvents.modifyOutputEvent(group)
                 .register((itemGroup) -> itemGroup.accept(item));
     }
 

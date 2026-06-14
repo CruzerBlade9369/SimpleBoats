@@ -12,7 +12,7 @@ import com.cruzer.simpleboats.network.SimpleBoatsControlPacket;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
-import net.fabricmc.fabric.api.client.rendering.v1.EntityModelLayerRegistry;
+import net.fabricmc.fabric.api.client.rendering.v1.ModelLayerRegistry;
 import net.minecraft.client.renderer.entity.EntityRenderers;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.EntityType;
@@ -35,7 +35,7 @@ public class SimpleBoatsClient implements ClientModInitializer
     {
         // Register all model layers
         SimpleBoatsModelLayers.ALL.forEach(entry ->
-                EntityModelLayerRegistry.registerModelLayer(
+                ModelLayerRegistry.registerModelLayer(
                         entry.layer(),
                         entry.provider()
                 )

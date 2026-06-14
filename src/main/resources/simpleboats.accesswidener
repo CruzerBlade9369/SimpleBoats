@@ -1,6 +1,3 @@
-accessWidener v2 named
-accessible field net/minecraft/entity/vehicle/AbstractBoatEntity yawVelocity F
+accessWidener v2 official
 accessible field net/minecraft/world/entity/vehicle/boat/AbstractBoat deltaRotation F
-accessible field net/minecraft/entity/vehicle/AbstractBoatEntity nearbySlipperiness F
-accessible method net/minecraft/entity/vehicle/AbstractBoatEntity checkLocation ()Lnet/minecraft/entity/vehicle/AbstractBoatEntity$Location;
 accessible method net/minecraft/world/entity/vehicle/boat/AbstractBoat getStatus ()Lnet/minecraft/world/entity/vehicle/boat/AbstractBoat$Status;
