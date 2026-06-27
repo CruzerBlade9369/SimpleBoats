@@ -12,7 +12,9 @@ public record SimpleBoatsControlPacket(
         boolean throttleDown
 ) implements CustomPacketPayload
 {
-    public static final CustomPacketPayload.Type<SimpleBoatsControlPacket> ID = new CustomPacketPayload.Type<>(Identifier.fromNamespaceAndPath(SimpleBoats.MOD_ID, "boats_control"));
+    public static final CustomPacketPayload.Type<SimpleBoatsControlPacket> ID =
+            new CustomPacketPayload.Type<>(Identifier.fromNamespaceAndPath(SimpleBoats.MOD_ID, "boats_control"));
+
     public static final StreamCodec<RegistryFriendlyByteBuf, SimpleBoatsControlPacket> CODEC =
             StreamCodec.composite(
                     ByteBufCodecs.BOOL, SimpleBoatsControlPacket::throttleUp,

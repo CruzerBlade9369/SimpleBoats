@@ -11,17 +11,31 @@ import java.util.function.Supplier;
 public class SailboatEntity extends AbstractPoweredBoatEntity
 {
     private static final float SAIL_HOIST_RATE = 0.04f;
-    private static final float SAIL_FORCE = 0.045f / DRAG_COMPENSATOR;
-    private static final float RUDDER_FULL_EFFECT_SPD = 0.5f;
-    private static final float MAX_TURN = 0.3f;
-    private static final float MIN_TURN = 0.05f;
     private static final int MAX_PAX = 5;
+
+    protected static float thrustForce = 0.05f / DRAG_COMPENSATOR;
+
+    private static float rudderFullEffectSpd = 0.5f;
+    private static float maxTurn = 0.3f;
+    private static float minTurn = 0.05f;
 
     @Environment(EnvType.CLIENT)
     private float tillerYaw = 0f;
 
     public SailboatEntity(EntityType<? extends SailboatEntity> entityType, Level world, Supplier<Item> supplier) {
         super(entityType, world, supplier);
+    }
+
+    public static void updateThrustValues(float thrustFactor)
+    {
+        thrustForce = thrustFactor / DRAG_COMPENSATOR;
+        rudderFullEffectSpd = thrustFactor * 10;
+    }
+
+    public static void updateTurnRate(float newMaxTurn, float newMinTurn)
+    {
+        maxTurn = newMaxTurn;
+        minTurn = newMinTurn;
     }
 
     @Override
@@ -39,7 +53,7 @@ public class SailboatEntity extends AbstractPoweredBoatEntity
     @Override
     protected float getPowerThrust()
     {
-        return SAIL_FORCE;
+        return thrustForce;
     }
 
     @Override
@@ -54,14 +68,14 @@ public class SailboatEntity extends AbstractPoweredBoatEntity
         float forwardSpeed = Math.max(0.0f, getForwardSpeed());
 
         float t = Mth.clamp(
-                forwardSpeed / RUDDER_FULL_EFFECT_SPD,
+                forwardSpeed / rudderFullEffectSpd,
                 0f,
                 1f
         );
 
         t = 1 - (1 - t) * (1 - t);
 
-        float turnStrength = MIN_TURN + t * (MAX_TURN - MIN_TURN);
+        float turnStrength = minTurn + t * (maxTurn - minTurn);
 
         if (leftInput) {
             this.deltaRotation -= turnStrength;

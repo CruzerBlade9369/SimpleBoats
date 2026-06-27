@@ -1,6 +1,7 @@
 {
   "type": "minecraft:crafting_shaped",
   "category": "misc",
+  "group": "simpleboats_sailboats",
   "key": {
     "#": "minecraft:bamboo",
     "E": "simpleboats:boat_sail",
@@ -12,7 +13,6 @@
     "#S#"
   ],
   "result": {
-    "count": 1,
     "id": "simpleboats:pale_oak_sailboat"
   }
 }

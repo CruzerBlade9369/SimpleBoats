@@ -1,5 +1,8 @@
 package com.cruzer.simpleboats.entity.vehicle;
 
+import com.cruzer.simpleboats.SimpleBoats;
+import com.cruzer.simpleboats.config.SimpleBoatsConfigManagerServer;
+import com.cruzer.simpleboats.config.SimpleBoatsConfigSynced;
 import com.cruzer.simpleboats.registry.SimpleBoatsSounds;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -11,7 +14,6 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
-import java.util.List;
 import java.util.function.Supplier;
 
 public class MotorboatEntity extends AbstractPoweredBoatEntity
@@ -24,13 +26,25 @@ public class MotorboatEntity extends AbstractPoweredBoatEntity
     private float propDirYaw = 0f;
 
     private static final float THROTTLE_RATE = 0.03f;
-    private static final float ENGINE_THRUST = 0.05f / DRAG_COMPENSATOR;
     private static final float PROP_MAX_SPIN_SPEED = 0.8f;
-    private static final float MAX_TURN = 0.3f;
     private static final int MAX_PAX = 5;
+
+    protected static float thrustForce = 0.06f / DRAG_COMPENSATOR;
+
+    private static float maxTurn = 0.3f;
 
     public MotorboatEntity(EntityType<? extends MotorboatEntity> entityType, Level world, Supplier<Item> supplier) {
         super(entityType, world, supplier);
+    }
+
+    public static void updateThrustValues(float thrustFactor)
+    {
+        thrustForce = thrustFactor / DRAG_COMPENSATOR;
+    }
+
+    public static void updateTurnRate(float turnRate)
+    {
+        maxTurn = turnRate;
     }
 
     @Override
@@ -48,7 +62,7 @@ public class MotorboatEntity extends AbstractPoweredBoatEntity
     @Override
     protected float getPowerThrust()
     {
-        return ENGINE_THRUST;
+        return thrustForce;
     }
 
     @Override
@@ -61,7 +75,7 @@ public class MotorboatEntity extends AbstractPoweredBoatEntity
     protected void applyTurning()
     {
         float throttle = getPowerLevel();
-        float turnStrength = (1 - (1 - throttle) * (1 - throttle)) * MAX_TURN;
+        float turnStrength = (1 - (1 - throttle) * (1 - throttle)) * maxTurn;
 
         if (leftInput)
             this.deltaRotation -= turnStrength;
@@ -73,8 +87,6 @@ public class MotorboatEntity extends AbstractPoweredBoatEntity
     @Override
     protected void clientVisualTick(float powerLevel) {
         calculatePropellerRotation(powerLevel);
-        if (this.isInWater() && powerLevel > 0.05f)
-            spawnPropellerBubbles();
     }
 
     @Override
@@ -86,9 +98,13 @@ public class MotorboatEntity extends AbstractPoweredBoatEntity
                 && !this.isSilent()
                 && !this.level().isClientSide() && this.tickCount > 0)
         {
+            Vec3 forward = this.getForward();
+            float offset = 3.5f;
+            Vec3 enginePos = this.position().subtract(forward.scale(offset));
+
             this.level().playSound(
                     null,
-                    getX(), getY(), getZ(),
+                    (float) enginePos.x, (float) enginePos.y, (float) enginePos.z,
                     SimpleBoatsSounds.BOAT_MOTOR_START,
                     getSoundSource(),
                     0.8f,
@@ -106,6 +122,13 @@ public class MotorboatEntity extends AbstractPoweredBoatEntity
     }
 
     @Environment(EnvType.CLIENT)
+    public void tickPropellerEffects()
+    {
+        if (this.isInWater() && getPowerLevel() > 0.05f)
+            spawnPropellerBubbles();
+    }
+
+    @Environment(EnvType.CLIENT)
     private void calculatePropellerRotation(float throttle)
     {
         lastPropellerAngle = propellerAngle;
@@ -114,7 +137,7 @@ public class MotorboatEntity extends AbstractPoweredBoatEntity
     }
 
     @Environment(EnvType.CLIENT)
-    private void spawnPropellerBubbles() {
+    public void spawnPropellerBubbles() {
         Level world = this.level();
         Vec3 pos = getPropellerWorldPos();
         float throttle = getPowerLevel();
