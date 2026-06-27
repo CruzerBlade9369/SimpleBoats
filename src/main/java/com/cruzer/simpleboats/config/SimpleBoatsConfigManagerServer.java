@@ -1,4 +1,4 @@
-package com.cruzer.simpleboats.client.config;
+package com.cruzer.simpleboats.config;
 
 import com.cruzer.simpleboats.SimpleBoats;
 import net.fabricmc.loader.api.FabricLoader;
@@ -10,7 +10,7 @@ import java.io.Writer;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
-public class SimpleBoatsConfigManagerClient
+public class SimpleBoatsConfigManagerServer
 {
     private static final Gson GSON = new GsonBuilder()
             .setPrettyPrinting()
@@ -19,9 +19,9 @@ public class SimpleBoatsConfigManagerClient
     private static final Path CONFIG_PATH =
             FabricLoader.getInstance()
                     .getConfigDir()
-                    .resolve("simpleboats-client.json");
+                    .resolve("simpleboats-server.json");
 
-    public static SimpleBoatsConfigClient CONFIG = new SimpleBoatsConfigClient();
+    public static SimpleBoatsConfigServer CONFIG = new SimpleBoatsConfigServer();
 
     public static void load()
     {
@@ -31,7 +31,7 @@ public class SimpleBoatsConfigManagerClient
             {
                 try (Reader reader = Files.newBufferedReader(CONFIG_PATH))
                 {
-                    CONFIG = GSON.fromJson(reader, SimpleBoatsConfigClient.class);
+                    CONFIG = GSON.fromJson(reader, SimpleBoatsConfigServer.class);
                 }
             }
             else
@@ -40,7 +40,7 @@ public class SimpleBoatsConfigManagerClient
             }
         } catch (Exception e)
         {
-            SimpleBoats.LOGGER.error("Failed to load client config", e);
+            SimpleBoats.LOGGER.error("Failed to load server config", e);
         }
     }
 
@@ -57,7 +57,7 @@ public class SimpleBoatsConfigManagerClient
         }
         catch (Exception e)
         {
-            SimpleBoats.LOGGER.error("Failed to save client config", e);
+            SimpleBoats.LOGGER.error("Failed to save server config", e);
         }
     }
 }

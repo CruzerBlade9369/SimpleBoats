@@ -46,6 +46,7 @@ public class SimpleBoatsRecipeGenerator extends FabricRecipeProvider
                             .pattern("#S#")
                             .pattern("#S#")
                             .pattern("#E#")
+                            .group("simpleboats_motorboats")
                             .unlockedBy(getHasName(SimpleBoatsItems.OUTBOARD_MOTOR), has(SimpleBoatsItems.OUTBOARD_MOTOR))
                             .save(
                                     this.output
@@ -64,6 +65,7 @@ public class SimpleBoatsRecipeGenerator extends FabricRecipeProvider
                             .pattern("#S#")
                             .pattern("#E#")
                             .pattern("#S#")
+                            .group("simpleboats_sailboats")
                             .unlockedBy(getHasName(SimpleBoatsItems.BOAT_SAIL), has(SimpleBoatsItems.BOAT_SAIL))
                             .save(
                                     this.output

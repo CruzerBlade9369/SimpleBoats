@@ -1,5 +1,6 @@
 package com.cruzer.simpleboats.client.renderer;
 
+import com.cruzer.simpleboats.client.config.SimpleBoatsConfigManagerClient;
 import com.cruzer.simpleboats.client.model.*;
 import com.cruzer.simpleboats.client.renderer.state.MotorboatRenderState;
 import com.cruzer.simpleboats.entity.vehicle.MotorboatEntity;
@@ -61,6 +62,10 @@ public class MotorboatRenderer extends AbstractPoweredBoatRenderer<MotorboatEnti
         );
         state.propDirYaw = entity.getPropDirYaw();
         state.throttleLeverPitch = -entity.getPowerLevel() * 0.2f;
+        if (SimpleBoatsConfigManagerClient.CONFIG.motorboatPropellerBubbles)
+        {
+            entity.tickPropellerEffects();
+        }
     }
 
     @Override

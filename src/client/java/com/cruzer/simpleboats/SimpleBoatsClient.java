@@ -4,6 +4,8 @@ import com.cruzer.simpleboats.client.config.SimpleBoatsConfigManagerClient;
 import com.cruzer.simpleboats.client.model.*;
 import com.cruzer.simpleboats.client.renderer.MotorboatRenderer;
 import com.cruzer.simpleboats.client.renderer.SailboatRenderer;
+import com.cruzer.simpleboats.config.SimpleBoatsConfigSynced;
+import com.cruzer.simpleboats.network.SimpleBoatsConfigSyncPacket;
 import com.cruzer.simpleboats.registry.SimpleBoatsEntities;
 import com.cruzer.simpleboats.entity.vehicle.MotorboatEntity;
 import com.cruzer.simpleboats.entity.vehicle.SailboatEntity;
@@ -80,6 +82,24 @@ public class SimpleBoatsClient implements ClientModInitializer
             ClientPlayNetworking.send(new SimpleBoatsControlPacket(up, down));
         });
 
+        ClientPlayNetworking.registerGlobalReceiver(
+                SimpleBoatsConfigSyncPacket.ID,
+                (payload, context) ->
+                        context.client().execute(() ->
+                        {
+                            SimpleBoatsConfigSynced.motorboatThrustFactor = payload.motorboatThrustFactor();
+                            SimpleBoatsConfigSynced.sailboatThrustFactor = payload.sailboatThrustFactor();
+                            SimpleBoatsConfigSynced.motorboatTurnRate = payload.motorboatTurnRate();
+                            SimpleBoatsConfigSynced.sailboatMaxTurnRate = payload.sailboatMaxTurnRate();
+                            SimpleBoatsConfigSynced.sailboatMinTurnRate = payload.sailboatMinTurnRate();
+                            SimpleBoatsConfigSynced.canEditConfig = payload.canEditConfig();
+
+                            MotorboatEntity.updateThrustValues(SimpleBoatsConfigSynced.motorboatThrustFactor);
+                            MotorboatEntity.updateTurnRate(SimpleBoatsConfigSynced.motorboatTurnRate);
+                            SailboatEntity.updateThrustValues(SimpleBoatsConfigSynced.sailboatThrustFactor);
+                            SailboatEntity.updateTurnRate(SimpleBoatsConfigSynced.sailboatMaxTurnRate, SimpleBoatsConfigSynced.sailboatMinTurnRate);
+                        })
+        );
         SimpleBoatsConfigManagerClient.load();
     }
 }

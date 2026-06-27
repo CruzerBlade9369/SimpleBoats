@@ -1,5 +1,6 @@
 package com.cruzer.simpleboats;
 
+import com.cruzer.simpleboats.config.SimpleBoatsConfigManagerServer;
 import com.cruzer.simpleboats.registry.SimpleBoatsEntities;
 import com.cruzer.simpleboats.registry.SimpleBoatsItems;
 import com.cruzer.simpleboats.network.SimpleBoatsNetworking;
@@ -30,5 +31,7 @@ public class SimpleBoats implements ModInitializer
         SimpleBoatsSounds.registerAll();
 
         SimpleBoatsNetworking.register();
+
+		SimpleBoatsConfigManagerServer.load();
 	}
 }
