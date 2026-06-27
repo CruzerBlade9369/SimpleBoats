@@ -5,6 +5,7 @@ import com.cruzer.simpleboats.registry.SimpleBoatsSounds;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.util.Mth;
+import net.minecraft.world.phys.Vec3;
 
 @Environment(EnvType.CLIENT)
 public class MotorboatEngineSoundInstance extends AbstractPoweredBoatSoundInstance
@@ -26,6 +27,14 @@ public class MotorboatEngineSoundInstance extends AbstractPoweredBoatSoundInstan
             this.volume = 0;
             return;
         }
+
+        Vec3 forward = boat.getForward();
+        float offset = 3.5f;
+        Vec3 enginePos = boat.position().subtract(forward.scale(offset));
+
+        this.x = (float) enginePos.x;
+        this.y = (float) enginePos.y;
+        this.z = (float) enginePos.z;
 
         float throttle = boat.getPowerLevel();
 

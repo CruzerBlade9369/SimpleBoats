@@ -6,7 +6,8 @@ import com.terraformersmc.modmenu.api.ModMenuApi;
 public class SimpleBoatsModMenu implements ModMenuApi
 {
     @Override
-    public ConfigScreenFactory<?> getModConfigScreenFactory() {
+    public ConfigScreenFactory<?> getModConfigScreenFactory()
+    {
         return SimpleBoatsConfigScreen::create;
     }
 }
