@@ -85,7 +85,7 @@ public abstract class AbstractPoweredBoatItem extends Item
             boat.setInitialPos(pos.x, pos.y, pos.z);
 
             if (world instanceof ServerLevel server) {
-                EntityType.createDefaultStackConfig(server, stack, player).accept(boat);
+                EntityType.createDefaultStackConfig(server, stack, player);
             }
         }
 
