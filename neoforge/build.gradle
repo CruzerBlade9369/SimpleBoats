@@ -1,0 +1,73 @@
+plugins {
+    id 'java-library'
+    id 'maven-publish'
+    id 'net.neoforged.gradle.userdev' version '7.1.38'
+}
+
+version = rootProject.mod_version
+group = rootProject.maven_group
+
+accessTransformers {
+    file 'src/main/resources/META-INF/accesstransformer.cfg'
+}
+
+base {
+    archivesName = "${archives_base_name}-neoforge-${minecraft_version}"
+}
+
+sourceSets {
+    main {
+        java {
+            srcDir 'src/client/java'
+            srcDirs += project(":common").file("src/main/java")
+            srcDirs += project(":common").file("src/client/java")
+        }
+        resources {
+            srcDirs += project(":common").file("src/main/resources")
+        }
+    }
+}
+
+runs {
+    configureEach {
+        systemProperty 'forge.logging.markers', 'REGISTRIES'
+        systemProperty 'forge.logging.console.level', 'debug'
+        workingDirectory project.layout.projectDirectory.dir('run').dir(name)
+        modSource project.sourceSets.main
+    }
+
+    client {
+        systemProperty 'neoforge.enabledGameTestNamespaces', mod_id
+    }
+
+    server {
+        systemProperty 'neoforge.enabledGameTestNamespaces', mod_id
+        argument '--nogui'
+    }
+}
+
+dependencies {
+    implementation "net.neoforged:neoforge:${neo_version}"
+
+    // YACL NeoForge
+    implementation "dev.isxander:yet-another-config-lib:3.9.5+26.2-neoforge"
+}
+
+tasks.withType(ProcessResources).configureEach {
+    var replaceProperties = [
+            minecraft_version      : minecraft_version,
+            minecraft_version_range: minecraft_version_range,
+            neo_version            : neo_version,
+            mod_id                 : mod_id,
+            mod_name               : mod_name,
+            mod_license            : mod_license,
+            mod_version            : mod_version,
+            mod_authors            : mod_authors,
+            mod_description        : mod_description,
+    ]
+    inputs.properties replaceProperties
+
+    filesMatching(['META-INF/neoforge.mods.toml']) {
+        expand replaceProperties
+    }
+}

@@ -1,0 +1,209 @@
+package com.cruzer.simpleboats.entity.vehicle;
+
+import com.cruzer.simpleboats.SimpleBoats;
+import com.cruzer.simpleboats.config.SimpleBoatsConfigManagerServer;
+import com.cruzer.simpleboats.config.SimpleBoatsConfigSynced;
+import com.cruzer.simpleboats.registry.SimpleBoatsSounds;
+import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.util.Mth;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.Vec3;
+import java.util.function.Supplier;
+
+public class MotorboatEntity extends AbstractPoweredBoatEntity
+{
+    private float propellerAngle = 0f;
+    private float lastPropellerAngle = 0f;
+    private float propDirYaw = 0f;
+
+    private static final float THROTTLE_RATE = 0.03f;
+    private static final float PROP_MAX_SPIN_SPEED = 0.8f;
+    private static final int MAX_PAX = 5;
+
+    protected static float thrustForce = 0.06f / DRAG_COMPENSATOR;
+
+    private static float maxTurn = 0.3f;
+
+    public MotorboatEntity(EntityType<? extends MotorboatEntity> entityType, Level world, Supplier<Item> supplier) {
+        super(entityType, world, supplier);
+    }
+
+    public static void updateThrustValues(float thrustFactor)
+    {
+        thrustForce = thrustFactor / DRAG_COMPENSATOR;
+    }
+
+    public static void updateTurnRate(float turnRate)
+    {
+        maxTurn = turnRate;
+    }
+
+    @Override
+    protected int getPoweredBoatMaxPax()
+    {
+        return MAX_PAX;
+    }
+
+    @Override
+    protected float getPowerControlRate()
+    {
+        return THROTTLE_RATE;
+    }
+
+    @Override
+    protected float getPowerThrust()
+    {
+        return thrustForce;
+    }
+
+    @Override
+    protected float getMinPowerLevel()
+    {
+        return 0f;
+    }
+
+    @Override
+    protected void applyTurning()
+    {
+        float throttle = getPowerLevel();
+        float turnStrength = (1 - (1 - throttle) * (1 - throttle)) * maxTurn;
+
+        if (leftInput)
+            this.deltaRotation -= turnStrength;
+        if (rightInput)
+            this.deltaRotation += turnStrength;
+    }
+
+    @Override
+    protected void clientVisualTick(float powerLevel) {
+        calculatePropellerRotation(powerLevel);
+    }
+
+    @Override
+    protected void addPassenger(Entity passenger)
+    {
+        boolean hasDriver = this.getControllingPassenger() instanceof Player;
+        if (!hasDriver
+                && passenger instanceof Player
+                && !this.isSilent()
+                && !this.level().isClientSide() && this.tickCount > 0)
+        {
+            Vec3 forward = this.getForward();
+            float offset = 3.5f;
+            Vec3 enginePos = this.position().subtract(forward.scale(offset));
+
+            this.level().playSound(
+                    null,
+                    (float) enginePos.x, (float) enginePos.y, (float) enginePos.z,
+                    SimpleBoatsSounds.BOAT_MOTOR_START.get(),
+                    getSoundSource(),
+                    0.8f,
+                    1.0f
+            );
+        }
+
+        super.addPassenger(passenger);
+    }
+
+    public float[] getPropellerAngle()
+    {
+        return new float[]{propellerAngle, lastPropellerAngle};
+    }
+
+    public void tickPropellerEffects()
+    {
+        if (this.isInWater() && getPowerLevel() > 0.05f)
+            spawnPropellerBubbles();
+    }
+
+    private void calculatePropellerRotation(float throttle)
+    {
+        lastPropellerAngle = propellerAngle;
+        propellerAngle += (float)(1 - Math.pow(1 - throttle * PROP_MAX_SPIN_SPEED, 4));
+        propellerAngle %= (float)(2 * Math.PI);
+    }
+
+    public void spawnPropellerBubbles() {
+        Level world = this.level();
+        Vec3 pos = getPropellerWorldPos();
+        float throttle = getPowerLevel();
+        int count = Mth.clamp((int) (throttle * 4), 1, 4);
+
+        Vec3 vel = this.getDeltaMovement();
+        double speedSq = this.getDeltaMovement().horizontalDistanceSqr();
+
+        double maxSpeed = 0.6;
+        double maxSpeedSq = maxSpeed * maxSpeed;
+
+        double speedFactor = 1.0 - Mth.clamp(
+                speedSq / maxSpeedSq,
+                0.0,
+                1.0
+        );
+
+        float yawRad = getYawRad();
+        Vec3 propWashDir = new Vec3(
+                -Mth.sin(yawRad),
+                0.0,
+                Mth.cos(yawRad)
+        ).normalize();
+
+        // fine tune here for visual exaggeration
+        double washStrength = 1;
+
+        for (int i = 0; i < count; i++)
+        {
+            Vec3 particleV = vel.add(propWashDir.scale(-washStrength * throttle * speedFactor));
+
+            world.addParticle(
+                    ParticleTypes.BUBBLE,
+                    pos.x + (this.random.nextDouble() - 0.5) * 0.2,
+                    pos.y,
+                    pos.z + (this.random.nextDouble() - 0.5) * 0.2,
+                    particleV.x, particleV.y, particleV.z
+            );
+        }
+    }
+
+    private Vec3 getPropellerWorldPos() {
+        float axisBackOffset = -2.9f;
+        float spawnBackOffset = -3.45f;
+        float verticalOffset = -1.25f;
+
+        float boatYawRad  = this.getYawRad();
+        float tillerYawRad = getPropDirYaw();
+
+        double pivotX = this.getX() - Mth.sin(boatYawRad) * axisBackOffset;
+        double pivotZ = this.getZ() + Mth.cos(boatYawRad) * axisBackOffset;
+        double pivotY = this.getY() + verticalOffset;
+
+        float localBack = spawnBackOffset - axisBackOffset;
+
+        double localX = -Mth.sin(tillerYawRad) * localBack;
+        double localZ =  Mth.cos(tillerYawRad) * localBack;
+
+        double worldX = localX * Mth.cos(boatYawRad) - localZ * Mth.sin(boatYawRad);
+        double worldZ = localX * Mth.sin(boatYawRad) + localZ * Mth.cos(boatYawRad);
+
+        return new Vec3(pivotX + worldX, pivotY, pivotZ + worldZ);
+    }
+
+    public float getPropDirYaw()
+    {
+        float targetYaw = 0f;
+
+        if (leftInput) targetYaw =  0.4f;
+        if (rightInput) targetYaw = -0.4f;
+
+        // Easing factor (0 = instant, 1 = never moves)
+        float ease = 0.15f;
+
+        propDirYaw += (targetYaw - propDirYaw) * ease;
+
+        return propDirYaw;
+    }
+}

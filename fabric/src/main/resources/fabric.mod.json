@@ -1,0 +1,52 @@
+{
+	"schemaVersion": 1,
+	"id": "simpleboats",
+	"version": "${version}",
+	"name": "Simple Boats",
+	"description": "Vanilla-friendly alternatives to the humble boat.",
+	"authors": [
+		"Cruzer"
+	],
+	"contributors": [
+		"Kimberstar",
+		"Ghost"
+	],
+	"contact": {
+		"homepage": "https://modrinth.com/mod/simple-boats",
+		"sources": "https://github.com/CruzerBlade9369/SimpleBoats"
+	},
+	"license": "GPL-3.0",
+	"icon": "assets/simpleboats/icon.png",
+	"environment": "*",
+	"entrypoints": {
+		"main": [
+          "com.cruzer.simpleboats.fabric.SimpleBoatsFabric"
+		],
+		"client": [
+          "com.cruzer.simpleboats.fabric.client.SimpleBoatsFabricClient"
+		],
+      	"fabric-datagen": [
+        "com.cruzer.simpleboats.datagen.SimpleBoatsDataGenerator"
+      	],
+		"modmenu": [
+			"com.cruzer.simpleboats.client.config.SimpleBoatsModMenu"
+		]
+    },
+	"mixins": [
+		"simpleboats.mixins.json",
+		{
+			"config": "simpleboats.client.mixins.json",
+			"environment": "client"
+		}
+	],
+    "accessWidener": "simpleboats.accesswidener",
+	"depends": {
+		"fabricloader": ">=0.19.3",
+		"minecraft": "26.2.*",
+		"java": ">=25",
+		"fabric-api": "*"
+	},
+	"suggests": {
+		"yet_another_config_lib_v3": ">=3.9.5"
+	}
+}
