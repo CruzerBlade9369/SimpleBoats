@@ -1,0 +1,47 @@
+{
+  "item.simpleboats.boat_propeller": "Hélice de Barco",
+  "item.simpleboats.outboard_motor": "Motor de Popa",
+  "item.simpleboats.boat_sail": "Vela de Barco",
+
+  "item.simpleboats.oak_motorboat": "Lancha de Carvalho",
+  "item.simpleboats.spruce_motorboat": "Lancha de Pinheiro",
+  "item.simpleboats.birch_motorboat": "Lancha de Bétula",
+  "item.simpleboats.jungle_motorboat": "Lancha de Selva",
+  "item.simpleboats.acacia_motorboat": "Lancha de Acácia",
+  "item.simpleboats.dark_oak_motorboat": "Lancha de Carvalho Escuro",
+  "item.simpleboats.mangrove_motorboat": "Lancha de Mangue",
+  "item.simpleboats.cherry_motorboat": "Lancha de Cerejeira",
+  "item.simpleboats.pale_oak_motorboat": "Lancha de Carvalho Pálido",
+
+  "entity.simpleboats.oak_motorboat": "Lancha de Carvalho",
+  "entity.simpleboats.spruce_motorboat": "Lancha de Pinheiro",
+  "entity.simpleboats.birch_motorboat": "Lancha de Bétula",
+  "entity.simpleboats.jungle_motorboat": "Lancha de Selva",
+  "entity.simpleboats.acacia_motorboat": "Lancha de Acácia",
+  "entity.simpleboats.dark_oak_motorboat": "Lancha de Carvalho Escuro",
+  "entity.simpleboats.mangrove_motorboat": "Lancha de Mangue",
+  "entity.simpleboats.cherry_motorboat": "Lancha de Cerejeira",
+  "entity.simpleboats.pale_oak_motorboat": "Lancha de Carvalho Pálido",
+
+  "item.simpleboats.oak_sailboat": "Veleiro de Carvalho",
+  "item.simpleboats.spruce_sailboat": "Veleiro de Pinheiro",
+  "item.simpleboats.birch_sailboat": "Veleiro de Bétula",
+  "item.simpleboats.jungle_sailboat": "Veleiro de Selva",
+  "item.simpleboats.acacia_sailboat": "Veleiro de Acácia",
+  "item.simpleboats.dark_oak_sailboat": "Veleiro de Carvalho Escuro",
+  "item.simpleboats.mangrove_sailboat": "Veleiro de Mangue",
+  "item.simpleboats.cherry_sailboat": "Veleiro de Cerejeira",
+  "item.simpleboats.pale_oak_sailboat": "Veleiro de Carvalho Pálido",
+
+  "entity.simpleboats.oak_sailboat": "Veleiro de Carvalho",
+  "entity.simpleboats.spruce_sailboat": "Veleiro de Pinheiro",
+  "entity.simpleboats.birch_sailboat": "Veleiro de Bétula",
+  "entity.simpleboats.jungle_sailboat": "Veleiro de Selva",
+  "entity.simpleboats.acacia_sailboat": "Veleiro de Acácia",
+  "entity.simpleboats.dark_oak_sailboat": "Veleiro de Carvalho Escuro",
+  "entity.simpleboats.mangrove_sailboat": "Veleiro de Mangue",
+  "entity.simpleboats.cherry_sailboat": "Veleiro de Cerejeira",
+  "entity.simpleboats.pale_oak_sailboat": "Veleiro de Carvalho Pálido",
+
+  "subtitles.simpleboats.boat_motor_start": "Motor do barco ligando"
+}

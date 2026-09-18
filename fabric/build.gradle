@@ -1,0 +1,51 @@
+plugins {
+    id 'net.fabricmc.fabric-loom'
+    id 'maven-publish'
+}
+
+base {
+    archivesName = "${archives_base_name}-fabric-${minecraft_version}"
+}
+
+loom {
+    splitEnvironmentSourceSets()
+
+    mods {
+        "simpleboats" {
+            sourceSet sourceSets.main
+            sourceSet sourceSets.client
+        }
+    }
+
+    accessWidenerPath = project(":common").file("src/main/resources/simpleboats.accesswidener")
+}
+
+sourceSets {
+    client {
+        java {
+            srcDirs += project(":common").file("src/client/java")
+        }
+    }
+}
+
+dependencies {
+    minecraft "com.mojang:minecraft:${minecraft_version}"
+
+    implementation project(":common")
+    clientImplementation project(":common")
+
+    implementation "net.fabricmc:fabric-loader:${loader_version}"
+    implementation "net.fabricmc.fabric-api:fabric-api:${fabric_version}"
+    implementation "dev.isxander:yet-another-config-lib:${yacl_version}"
+    implementation "com.terraformersmc:modmenu:${modmenu_version}"
+}
+
+processResources {
+    inputs.property "version", project.version
+
+    filesMatching("fabric.mod.json") {
+        expand "version": inputs.properties.version
+    }
+
+    from project(":common").sourceSets.main.resources
+}

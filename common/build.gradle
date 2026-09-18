@@ -1,0 +1,13 @@
+plugins {
+    id 'net.fabricmc.fabric-loom'
+}
+
+dependencies {
+    minecraft "com.mojang:minecraft:${minecraft_version}"
+
+    compileOnly "dev.isxander:yet-another-config-lib:${yacl_version}"
+}
+
+loom {
+    accessWidenerPath = file("src/main/resources/simpleboats.accesswidener")
+}
