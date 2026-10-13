@@ -3,7 +3,7 @@
   "criteria": {
     "has_the_recipe": {
       "conditions": {
-        "recipe": "simpleboats:boat_sail"
+        "recipes": "simpleboats:boat_sail"
       },
       "trigger": "minecraft:recipe_unlocked"
     },

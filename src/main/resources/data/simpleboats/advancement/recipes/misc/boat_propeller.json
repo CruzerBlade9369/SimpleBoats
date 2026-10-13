@@ -13,7 +13,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "simpleboats:boat_propeller"
+        "recipes": "simpleboats:boat_propeller"
       },
       "trigger": "minecraft:recipe_unlocked"
     }

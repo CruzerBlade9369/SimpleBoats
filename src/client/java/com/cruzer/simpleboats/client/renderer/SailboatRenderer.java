@@ -74,8 +74,7 @@ public class SailboatRenderer extends AbstractPoweredBoatRenderer<SailboatEntity
                 RenderTypes.entityTranslucent(state.texture),
                 state.lightCoords,
                 OverlayTexture.NO_OVERLAY,
-                state.outlineColor,
-                null
+                state.outlineColor
         );
 
         queue.submitModel(
@@ -85,8 +84,7 @@ public class SailboatRenderer extends AbstractPoweredBoatRenderer<SailboatEntity
                 RenderTypes.entityTranslucent(state.texture),
                 state.lightCoords,
                 OverlayTexture.NO_OVERLAY,
-                state.outlineColor,
-                null
+                state.outlineColor
         );
     }
 }

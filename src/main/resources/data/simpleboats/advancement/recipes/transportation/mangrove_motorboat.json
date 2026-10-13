@@ -13,7 +13,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "simpleboats:mangrove_motorboat"
+        "recipes": "simpleboats:mangrove_motorboat"
       },
       "trigger": "minecraft:recipe_unlocked"
     }

@@ -13,7 +13,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "simpleboats:spruce_motorboat"
+        "recipes": "simpleboats:spruce_motorboat"
       },
       "trigger": "minecraft:recipe_unlocked"
     }

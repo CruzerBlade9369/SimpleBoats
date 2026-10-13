@@ -45,7 +45,7 @@ public abstract class AbstractPoweredBoatRenderer<
     }
 
     @Override
-    protected AABB getBoundingBoxForCulling(E entity)
+    protected AABB getBoundingBoxForCulling(E entity, float partialTicks)
     {
         return entity.getBoundingBox().expandTowards(
                 3.0, 5.0, 3.0
@@ -80,33 +80,33 @@ public abstract class AbstractPoweredBoatRenderer<
     {
         // position/rotation similar to vanilla boats
         matrices.translate(0.0F, 0.375F, 0.0F);
-        matrices.mulPose(Axis.YP.rotationDegrees(180.0F - state.yRot));
+        matrices.rotate(Axis.YP.rotationDegrees(180.0F - state.yRot));
 
         // damage wobble / bubble wobble
         float f = state.hurtTime;
         if (f > 0.0F) {
-            matrices.mulPose(Axis.XP.rotationDegrees(
+            matrices.rotate(Axis.XP.rotationDegrees(
                     Mth.sin(f) * f * state.damageTime / 10.0F * state.hurtDir
             ));
         }
 
         if (!state.isUnderWater && !Mth.equal(state.bubbleAngle, 0.0F)) {
-            matrices.mulPose(new Quaternionf().setAngleAxis(state.bubbleAngle * (float) (Math.PI / 180.0), 1.0F, 0.0F, 1.0F));
+            matrices.rotate(new Quaternionf().setAngleAxis(state.bubbleAngle * (float) (Math.PI / 180.0), 1.0F, 0.0F, 1.0F));
         }
 
         // ambient sway
-        matrices.mulPose(
+        matrices.rotate(
                 Axis.ZP.rotationDegrees(state.swayRoll)
         );
-        matrices.mulPose(
+        matrices.rotate(
                 Axis.XP.rotationDegrees(state.swayPitch)
         );
         // speed pitch
-        matrices.mulPose(
+        matrices.rotate(
                 Axis.XP.rotationDegrees(state.speedPitch)
         );
         // turn lean
-        matrices.mulPose(
+        matrices.rotate(
                 Axis.ZP.rotationDegrees(state.turnRoll)
         );
 
@@ -209,8 +209,7 @@ public abstract class AbstractPoweredBoatRenderer<
                 RenderTypes.entityTranslucent(state.texture),
                 state.lightCoords,
                 OverlayTexture.NO_OVERLAY,
-                state.outlineColor,
-                null
+                state.outlineColor
         );
 
         renderAttachments(state, matrices, queue);
@@ -223,8 +222,7 @@ public abstract class AbstractPoweredBoatRenderer<
                     RenderTypes.waterMask(),
                     state.lightCoords,
                     OverlayTexture.NO_OVERLAY,
-                    state.outlineColor,
-                    null
+                    state.outlineColor
             );
         }
 

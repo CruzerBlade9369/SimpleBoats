@@ -4,13 +4,17 @@ import com.cruzer.simpleboats.registry.SimpleBoatsTypes;
 import com.cruzer.simpleboats.registry.SimpleBoatsItems;
 import net.fabricmc.fabric.api.datagen.v1.FabricPackOutput;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricRecipeProvider;
+import net.minecraft.advancements.Advancement;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.recipes.RecipeCategory;
 import net.minecraft.data.recipes.RecipeOutput;
 import net.minecraft.data.recipes.RecipeProvider;
+import net.minecraft.data.worldgen.BootstrapContext;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.item.crafting.Recipe;
+
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 
@@ -28,9 +32,9 @@ public class SimpleBoatsRecipeGenerator extends FabricRecipeProvider
     }
 
     @Override
-    protected RecipeProvider createRecipeProvider(HolderLookup.Provider registryLookup, RecipeOutput exporter)
+    protected RecipeProvider createRecipeProvider(HolderLookup.Provider registryLookup, BootstrapContext<Recipe<?>> exporter, BootstrapContext<Advancement> advancement)
     {
-        return new RecipeProvider(registryLookup, exporter) {
+        return new RecipeProvider(exporter, advancement) {
             @Override
             public void buildRecipes()
             {

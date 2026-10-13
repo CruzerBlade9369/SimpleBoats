@@ -13,7 +13,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "simpleboats:dark_oak_sailboat"
+        "recipes": "simpleboats:dark_oak_sailboat"
       },
       "trigger": "minecraft:recipe_unlocked"
     }

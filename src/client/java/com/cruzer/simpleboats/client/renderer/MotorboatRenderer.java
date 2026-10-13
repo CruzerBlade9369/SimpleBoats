@@ -82,8 +82,7 @@ public class MotorboatRenderer extends AbstractPoweredBoatRenderer<MotorboatEnti
                 RenderTypes.entityTranslucent(state.motorTexture),
                 state.lightCoords,
                 OverlayTexture.NO_OVERLAY,
-                state.outlineColor,
-                null
+                state.outlineColor
         );
     }
 }

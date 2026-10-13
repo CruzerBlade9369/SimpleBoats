@@ -13,7 +13,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "simpleboats:birch_sailboat"
+        "recipes": "simpleboats:birch_sailboat"
       },
       "trigger": "minecraft:recipe_unlocked"
     }

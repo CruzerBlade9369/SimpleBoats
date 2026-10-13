@@ -13,7 +13,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "simpleboats:outboard_motor"
+        "recipes": "simpleboats:outboard_motor"
       },
       "trigger": "minecraft:recipe_unlocked"
     }

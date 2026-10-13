@@ -13,7 +13,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "simpleboats:oak_motorboat"
+        "recipes": "simpleboats:oak_motorboat"
       },
       "trigger": "minecraft:recipe_unlocked"
     }

@@ -13,7 +13,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "simpleboats:cherry_motorboat"
+        "recipes": "simpleboats:cherry_motorboat"
       },
       "trigger": "minecraft:recipe_unlocked"
     }
